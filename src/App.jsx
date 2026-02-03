@@ -9,7 +9,7 @@ import MoreAboutMe from "./components/MoreAboutMe";
 import Blog from './components/Blog';
 import BlogDetail from './components/BlogDetail';
 import MyDiary from './components/MyDiary'
-import DiaryDetail from './components/DiaryDetail'
+import SubDiary from './components/SubDiary'
 import Projects from './components/Projects'
 
 export default function App() {
@@ -25,7 +25,7 @@ export default function App() {
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:slug" element={<BlogDetail />} />
           <Route path="/mydiary" element={<MyDiary />} />
-          <Route path="/mydiary/:slug" element={<DiaryDetail />} />
+          <Route path="/mydiary/:slug" element={<SubDiary />} />
           <Route path="/projects" element={<Projects />} />
         </Routes>
       </SiteContainer>
