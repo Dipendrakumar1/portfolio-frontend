@@ -162,7 +162,7 @@ export default function Blog() {
   const [blogs, setBlogs] = useState([]);
 
   useEffect(() => {
-    fetch(`${API_BASE_URL}/blog`)
+    fetch(`${API_BASE_URL}/blogs`)
       .then((res) => res.json())
       .then((data) => setBlogs(data))
       .catch((err) => console.error("Error fetching blogs:", err));

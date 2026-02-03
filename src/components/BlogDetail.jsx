@@ -74,49 +74,49 @@ const FooterLink = styled.a`
 `;
 
 export default function BlogDetail() {
-    const { slug } = useParams();
-    const [blog, setBlog] = useState(null);
-    const [loading, setLoading] = useState(true);
+  const { slug } = useParams();
+  const [blog, setBlog] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        fetch(`${API_BASE_URL}/blog/${slug}`)
-            .then(res => res.json())
-            .then(data => {
-                setBlog(data);
-                setLoading(false);
-            })
-            .catch(err => {
-                console.error(err);
-                setLoading(false);
-            });
-    }, [slug]);
+  useEffect(() => {
+    fetch(`${API_BASE_URL}/blogs/${slug}`)
+      .then(res => res.json())
+      .then(data => {
+        setBlog(data);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error(err);
+        setLoading(false);
+      });
+  }, [slug]);
 
-    if (loading) return <Page><Container><Section><Heading>Loading blog...</Heading></Section></Container></Page>;
-    if (!blog) return <Page><Container><Section><Heading>Blog not found.</Heading></Section></Container></Page>;
+  if (loading) return <Page><Container><Section><Heading>Loading blog...</Heading></Section></Container></Page>;
+  if (!blog) return <Page><Container><Section><Heading>Blog not found.</Heading></Section></Container></Page>;
 
-    return (
-        <Page>
-            <Container>
-                <Section>
-                    <Heading>{blog.title}</Heading>
-                    <Separator>--)::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::(--</Separator>
-                    <BlogMeta>
-                        {blog.published_at} · {blog.author} · {blog.read_time_min} min read
-                    </BlogMeta>
+  return (
+    <Page>
+      <Container>
+        <Section>
+          <Heading>{blog.title}</Heading>
+          <Separator>--)::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::(--</Separator>
+          <BlogMeta>
+            {blog.published_at} · {blog.author} · {blog.read_time_min} min read
+          </BlogMeta>
 
-                    {blog.hero_image && (
-                        <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-                            <img src={getImageUrl(blog.hero_image)} alt={blog.title} style={{ maxWidth: '100%', border: '4px solid #8fdac2', padding: '10px' }} />
-                        </div>
-                    )}
+          {blog.hero_image && (
+            <div style={{ textAlign: 'center', marginBottom: '40px' }}>
+              <img src={getImageUrl(blog.hero_image)} alt={blog.title} style={{ maxWidth: '100%', border: '4px solid #8fdac2', padding: '10px' }} />
+            </div>
+          )}
 
-                    <BlogContent dangerouslySetInnerHTML={{ __html: blog.content }} />
-                </Section>
-            </Container>
+          <BlogContent dangerouslySetInnerHTML={{ __html: blog.content }} />
+        </Section>
+      </Container>
 
-            <Footer>
-                <FooterLink href="/blog">[Back to Blogs] →</FooterLink>
-            </Footer>
-        </Page>
-    );
+      <Footer>
+        <FooterLink href="/blog">[Back to Blogs] →</FooterLink>
+      </Footer>
+    </Page>
+  );
 }
