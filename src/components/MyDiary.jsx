@@ -34,23 +34,35 @@ const Navbar = styled.div`
 `;
 
 const Container = styled.div`
-  width: 85%;
+  width: 90%;
+  max-width: 1000px;
   margin: auto;
+  @media (max-width: 768px) {
+    width: 95%;
+  }
 `;
 
 const Section = styled.div`
   padding: 40px 0;
+  @media (max-width: 768px) {
+    padding: 20px 0;
+  }
 `;
 
 const Heading = styled.div`
   font-size: 22px;
   font-weight: bold;
+  @media (max-width: 768px) {
+    font-size: 18px;
+  }
 `;
 
 const Separator = styled.div`
   color: #8fdac2;
   margin: 10px 0 25px 0;
   font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
 `;
 
 // Diary list styles
@@ -68,6 +80,8 @@ const DiaryTitleSeparator = styled.div`
   margin-top: 4px;
   color: #8fdac2;
   font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
 `;
 
 const DiaryMeta = styled.div`

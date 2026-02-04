@@ -13,6 +13,11 @@ const Sections = styled.section`
   align-items: flex-start;
   width: 100%;
   flex-wrap: wrap;
+
+  @media (max-width: ${theme.breakpoints.tablet}) {
+    gap: 24px;
+    margin-top: 32px;
+  }
 `
 
 const CardsRow = styled.div`

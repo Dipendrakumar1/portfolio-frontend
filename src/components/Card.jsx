@@ -3,7 +3,8 @@ import styled from 'styled-components'
 import { theme } from '../styles/GlobalStyles'
 
 const CardWrap = styled.article`
-  width: 320px;
+  width: 100%;
+  max-width: 320px;
   border: 6px solid ${theme.accent};
   padding: 10px;
   border-radius: 5px;
@@ -11,6 +12,10 @@ const CardWrap = styled.article`
   display: flex;
   flex-direction: column;
   align-items: stretch;
+
+  @media (max-width: ${theme.breakpoints.mobile}) {
+    max-width: 100%;
+  }
 `
 
 const Img = styled.img`
@@ -33,10 +38,10 @@ const Read = styled.div`
   color: ${theme.accent};
 `
 
-export default function Card({src, alt, title, href}) {
+export default function Card({ src, alt, title, href }) {
   return (
     <CardWrap role="listitem">
-      <Img src={src} alt={alt}/>
+      <Img src={src} alt={alt} />
       <Title>{title}</Title>
       <Read><a href={href || '#'}>[Read more]</a></Read>
     </CardWrap>

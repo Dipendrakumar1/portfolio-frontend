@@ -13,19 +13,23 @@ const Page = styled.div`
 
 const Navbar = styled.div`
   display: flex;
-  gap: 20px;
-  padding: 20px;
+  gap: 15px;
+  padding: 15px;
   background: #2b3337;
   border-bottom: 2px solid #8fdac2;
   position: sticky;
   top: 0;
+  flex-wrap: wrap;
+  justify-content: center;
+  z-index: 100;
 
   a {
-    padding: 6px 12px;
+    padding: 6px 10px;
     border: 1px solid #8fdac2;
     border-radius: 4px;
     color: #9ee3b1;
     text-decoration: none;
+    font-size: 14px;
 
     &:hover {
       color: #c1ffd2;
@@ -34,23 +38,36 @@ const Navbar = styled.div`
 `;
 
 const Container = styled.div`
-  width: 85%;
+  width: 90%;
+  max-width: 1000px;
   margin: auto;
+
+  @media (max-width: 768px) {
+    width: 95%;
+  }
 `;
 
 const Section = styled.div`
   padding: 40px 0;
+  @media (max-width: 768px) {
+    padding: 20px 0;
+  }
 `;
 
 const Heading = styled.div`
   font-size: 22px;
   font-weight: bold;
+  @media (max-width: 768px) {
+    font-size: 18px;
+  }
 `;
 
 const Separator = styled.div`
   color: #8fdac2;
   margin: 10px 0 25px 0;
   font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
 `;
 
 const Paragraph = styled.p`
@@ -76,8 +93,16 @@ const ProfileContainer = styled.div`
   display: flex;
   gap: 40px;
 
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    text-align: center;
+  }
+
   img {
     width: 260px;
+    max-width: 100%;
     border: 4px solid #8fdac2;
     padding: 10px;
   }
@@ -87,10 +112,16 @@ const ProfileContainer = styled.div`
   }
 `;
 
+const TableWrapper = styled.div`
+  width: 100%;
+  overflow-x: auto;
+  margin-top: 20px;
+`;
+
 const Table = styled.table`
   width: 100%;
+  min-width: 500px;
   border-collapse: collapse;
-  margin-top: 20px;
 
   th, td {
     border: 2px solid #8fdac2;
@@ -326,32 +357,34 @@ export default function AboutMore() {
         {/* CERTIFICATES */}
         <Section>
           <Heading>Certificates and Badges</Heading>
-          <Table>
-            <thead>
-              <tr>
-                <th>NAME</th>
-                <th>LINK</th>
-              </tr>
-            </thead>
-            <tbody>
-              {certs.length > 0 ? (
-                certs.map((cert) => (
-                  <tr key={cert.id}>
-                    <td>{cert.name}</td>
-                    <td>
-                      {cert.image_url ? (
-                        <img src={getImageUrl(cert.image_url)} className="certificate-img" alt={cert.name} />
-                      ) : (
-                        <a href={cert.link_url} target="_blank" rel="noopener noreferrer">Certificate Link</a>
-                      )}
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr><td colspan="2">No certificates found.</td></tr>
-              )}
-            </tbody>
-          </Table>
+          <TableWrapper>
+            <Table>
+              <thead>
+                <tr>
+                  <th>NAME</th>
+                  <th>LINK</th>
+                </tr>
+              </thead>
+              <tbody>
+                {certs.length > 0 ? (
+                  certs.map((cert) => (
+                    <tr key={cert.id}>
+                      <td>{cert.name}</td>
+                      <td>
+                        {cert.image_url ? (
+                          <img src={getImageUrl(cert.image_url)} className="certificate-img" alt={cert.name} />
+                        ) : (
+                          <a href={cert.link_url} target="_blank" rel="noopener noreferrer">Certificate Link</a>
+                        )}
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr><td colspan="2">No certificates found.</td></tr>
+                )}
+              </tbody>
+            </Table>
+          </TableWrapper>
         </Section>
       </Container>
       {/* FOOTER */}

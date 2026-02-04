@@ -6,6 +6,12 @@ const Col = styled.div`
   flex: 1 1 0;
   min-width: 200px;
   max-width: 33%;
+
+  @media (max-width: ${theme.breakpoints.tablet}) {
+    max-width: 100%;
+    flex: 1 1 100%;
+    text-align: center;
+  }
 `
 
 const Title = styled.h2`

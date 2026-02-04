@@ -12,31 +12,69 @@ const Page = styled.div`
   padding: 40px 0;
 `;
 
+const ImageFrame = styled.div`
+  border: 4px solid #8fdac2;
+  padding: 12px;
+  background: #2b3337;
+  max-width: 600px;
+  margin: 25px auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+  }
+`;
+
 const Container = styled.div`
-  width: 85%;
+  width: 90%;
+  max-width: 1000px;
   margin: auto;
+
+  @media (max-width: 768px) {
+    width: 95%;
+  }
 `;
 
 const Section = styled.div`
   padding: 40px 0;
+  @media (max-width: 768px) {
+    padding: 20px 0;
+  }
 `;
 
 const Heading = styled.div`
   font-size: 26px;
   font-weight: bold;
   color: #9ee3b1;
+  text-align: left;
+  @media (max-width: 768px) {
+    font-size: 20px;
+  }
 `;
 
 const Separator = styled.div`
   color: #8fdac2;
   margin: 15px 0 25px 0;
   font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  line-height: 1;
+  text-align: left;
+  max-width: 100%;
 `;
 
 const BlogMeta = styled.div`
   margin-bottom: 25px;
   font-size: 14px;
   color: #8fdac2;
+  text-align: left;
+  @media (max-width: 768px) {
+    font-size: 12px;
+  }
 `;
 
 const BlogContent = styled.div`
@@ -49,9 +87,11 @@ const BlogContent = styled.div`
   
   img {
     max-width: 100%;
+    max-width: 500px;
     height: auto;
     border: 4px solid #8fdac2;
-    padding: 10px;
+    padding: 12px;
+    background: #2b3337;
     margin: 20px auto;
     display: block;
   }
@@ -105,9 +145,9 @@ export default function BlogDetail() {
           </BlogMeta>
 
           {blog.hero_image && (
-            <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-              <img src={getImageUrl(blog.hero_image)} alt={blog.title} style={{ maxWidth: '100%', border: '4px solid #8fdac2', padding: '10px' }} />
-            </div>
+            <ImageFrame>
+              <img src={getImageUrl(blog.hero_image)} alt={blog.title} />
+            </ImageFrame>
           )}
 
           <BlogContent dangerouslySetInnerHTML={{ __html: blog.content }} />

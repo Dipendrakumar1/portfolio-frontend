@@ -34,36 +34,54 @@ const Navbar = styled.div`
 `;
 
 const Container = styled.div`
-  width: 85%;
+  width: 90%;
+  max-width: 1000px;
   margin: auto;
+  @media (max-width: 768px) {
+    width: 95%;
+  }
 `;
 
 const Section = styled.div`
   padding: 40px 0;
+  @media (max-width: 768px) {
+    padding: 20px 0;
+  }
 `;
 
 const Heading = styled.div`
   font-size: 22px;
   font-weight: bold;
+  text-align: left;
+  @media (max-width: 768px) {
+    font-size: 18px;
+  }
 `;
 
 const Separator = styled.div`
   color: #8fdac2;
   margin: 10px 0 25px 0;
   font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-align: left;
 `;
 
 const Paragraph = styled.p`
   line-height: 1.7;
   margin-bottom: 20px;
+  text-align: left;
 `;
 
 const ImageFrame = styled.div`
   border: 4px solid #8fdac2;
   padding: 12px;
   background: #2b3337;
-  width: fit-content;
+  max-width: 500px;
   margin: 25px auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
   img {
     max-width: 100%;
@@ -79,12 +97,17 @@ const BlogList = styled.div`
 
 const BlogItem = styled.div`
   margin-bottom: 35px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
 `;
 
 const BlogTitle = styled.a`
   font-size: 18px;
   color: #9ee3b1;
   text-decoration: none;
+  font-weight: bold;
 
   &:hover {
     color: #c1ffd2;
@@ -100,10 +123,11 @@ const BlogMeta = styled.div`
 const BlogTeaser = styled.p`
   margin-bottom: 14px;
   line-height: 1.6;
+  max-width: 800px;
 `;
 
 const BlogThumbnailFrame = styled(ImageFrame)`
-  margin: 15px 0 0 0;
+  margin: 15px auto 0 auto;
 `;
 
 // Footer (same as AboutMore)

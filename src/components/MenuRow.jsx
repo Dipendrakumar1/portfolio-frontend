@@ -12,6 +12,12 @@ const Nav = styled.nav`
   display: inline-flex;
   gap: 40px;
   align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+
+  @media (max-width: ${theme.breakpoints.mobile}) {
+    gap: 20px;
+  }
 `
 
 const MenuLink = styled.a`
@@ -20,7 +26,7 @@ const MenuLink = styled.a`
   letter-spacing: 0.6px;
 `
 
-export default function MenuRow(){
+export default function MenuRow() {
   return (
     <MenuWrap role="navigation" aria-label="main menu">
       <Nav>

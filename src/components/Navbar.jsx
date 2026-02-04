@@ -35,6 +35,9 @@ const Bars = styled.div`
   user-select: none;
   white-space: nowrap;
   overflow: hidden;
+  @media (max-width: ${theme.breakpoints.tablet}) {
+    display: none;
+  }
   &::before{
     content: "|^|^|^|^|^|^|^|^|^|^|^|^|^|^|^|^|^|^|^|^|^|^|^|^|^|^|^|^|^||";
     display:inline-block;
