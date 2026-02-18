@@ -241,6 +241,11 @@ export default function AboutMore() {
   const [about, setAbout] = useState(null);
   const [certs, setCerts] = useState([]);
   const [experiences, setExperiences] = useState([]);
+  const [skills, setSkills] = useState([]);
+  const [interests, setInterests] = useState([]);
+  const [tools, setTools] = useState([]);
+  const [languages, setLanguages] = useState([]);
+  const [achievements, setAchievements] = useState([]);
 
   useEffect(() => {
     fetch(`${API_BASE_URL}/about`)
@@ -257,15 +262,38 @@ export default function AboutMore() {
       .then((res) => res.json())
       .then((data) => setExperiences(data))
       .catch((err) => console.error("Error fetching experiences:", err));
+
+    fetch(`${API_BASE_URL}/skills`)
+      .then((res) => res.json())
+      .then((data) => setSkills(data))
+      .catch((err) => console.error("Error fetching skills:", err));
+
+    fetch(`${API_BASE_URL}/interests`)
+      .then((res) => res.json())
+      .then((data) => setInterests(data))
+      .catch((err) => console.error("Error fetching interests:", err));
+
+    fetch(`${API_BASE_URL}/tools`)
+      .then((res) => res.json())
+      .then((data) => setTools(data))
+      .catch((err) => console.error("Error fetching tools:", err));
+
+    fetch(`${API_BASE_URL}/languages`)
+      .then((res) => res.json())
+      .then((data) => setLanguages(data))
+      .catch((err) => console.error("Error fetching languages:", err));
+
+    fetch(`${API_BASE_URL}/achievements`)
+      .then((res) => res.json())
+      .then((data) => setAchievements(data))
+      .catch((err) => console.error("Error fetching achievements:", err));
   }, []);
 
   return (
     <Page>
-
-
       <Container>
         {/* ABOUT HEADER */}
-        <Section>
+        <Section id="top">
           <Heading>About Me</Heading>
           <Separator>--)::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::(--</Separator>
           <Paragraph>Dipendra Yadav :: 5 min read (900 words)</Paragraph>
@@ -279,27 +307,27 @@ export default function AboutMore() {
         <Section>
           <Heading>Table of Contents</Heading>
           <List>
-            <li><a href="#">Core Skills & Expertise</a></li>
-            <li>
-              <a href="#">Experience</a>
-              <ul>
-                <li>rtCamp</li>
-                <li>Viamagus</li>
-                <li>Ksctl</li>
-                <li>Kubesimplify</li>
-                <li>Viamagus</li>
-              </ul>
-            </li>
-            <li><a href="#">Interests</a></li>
-            <li><a href="#">Tools and Technologies</a></li>
-            <li><a href="#">Programming Languages</a></li>
-            <li><a href="#">Achievements</a></li>
-            <li><a href="#">Certificates and Badges</a></li>
+            {skills.length > 0 && <li><a href="#skills">Core Skills & Expertise</a></li>}
+            {experiences.length > 0 && (
+              <li>
+                <a href="#experience">Experience</a>
+                <ul>
+                  {experiences.map(exp => (
+                    <li key={exp.id}>{exp.company_name}</li>
+                  ))}
+                </ul>
+              </li>
+            )}
+            {interests.length > 0 && <li><a href="#interests">Interests</a></li>}
+            {tools.length > 0 && <li><a href="#tools">Tools and Technologies</a></li>}
+            {languages.length > 0 && <li><a href="#languages">Programming Languages</a></li>}
+            {achievements.length > 0 && <li><a href="#achievements">Achievements</a></li>}
+            {certs.length > 0 && <li><a href="#certificates">Certificates and Badges</a></li>}
           </List>
         </Section>
 
         {/* ABOUT PROFILE */}
-        <Section>
+        <Section id="about">
           <Heading>About Me</Heading>
           <ProfileContainer>
             <img src={getImageUrl(about?.hero_image) || "img/profile.jpg"} alt="Profile" />
@@ -313,17 +341,37 @@ export default function AboutMore() {
           </ProfileContainer>
         </Section>
 
+        {/* SKILLS */}
+        {skills.length > 0 && (
+          <Section id="skills">
+            <Heading>Core Skills & Expertise</Heading>
+            <BadgeContainer style={{ marginTop: "20px" }}>
+              {skills.map(skill => (
+                <Badge key={skill.id}>
+                  <span>{skill.category || 'Skill'}</span> {skill.name} {skill.level && `(${skill.level})`}
+                </Badge>
+              ))}
+            </BadgeContainer>
+          </Section>
+        )}
+
         {/* ACHIEVEMENTS */}
-        <Section>
-          <Heading>🏆 Achievements & Recognitions</Heading>
-          <List>
-            <li>Winner — Nappitive + WeMakeDevs Cloud Native Hackathon</li>
-            <li>Built Ksctl (carbon-aware Kubernetes CLI)</li>
-            <li>Developed DevSecOps & MLOps pipelines</li>
-          </List>
-        </Section>
+        {achievements.length > 0 && (
+          <Section id="achievements">
+            <Heading>🏆 Achievements & Recognitions</Heading>
+            <List>
+              {achievements.map(ach => (
+                <li key={ach.id}>
+                  <strong>{ach.title}</strong>
+                  {ach.description && <Paragraph style={{ fontSize: "14px", margin: "5px 0" }}>{ach.description}</Paragraph>}
+                </li>
+              ))}
+            </List>
+          </Section>
+        )}
+
         {/* EXPERIENCE */}
-        <Section>
+        <Section id="experience">
           <Heading>Experience</Heading>
           {experiences.length > 0 ? (
             experiences.map((exp) => (
@@ -354,8 +402,48 @@ export default function AboutMore() {
             <Paragraph>No experience records found.</Paragraph>
           )}
         </Section>
+
+        {/* INTERESTS */}
+        {interests.length > 0 && (
+          <Section id="interests">
+            <Heading>Interests</Heading>
+            <List>
+              {interests.map(interest => (
+                <li key={interest.id}>{interest.name}</li>
+              ))}
+            </List>
+          </Section>
+        )}
+
+        {/* TOOLS */}
+        {tools.length > 0 && (
+          <Section id="tools">
+            <Heading>Tools and Technologies</Heading>
+            <BadgeContainer style={{ marginTop: "20px" }}>
+              {tools.map(tool => (
+                <Badge key={tool.id}>
+                  {tool.icon_url && <img src={getImageUrl(tool.icon_url)} alt="" style={{ height: "16px", marginRight: "5px" }} />}
+                  {tool.name}
+                </Badge>
+              ))}
+            </BadgeContainer>
+          </Section>
+        )}
+
+        {/* LANGUAGES */}
+        {languages.length > 0 && (
+          <Section id="languages">
+            <Heading>Programming Languages</Heading>
+            <List>
+              {languages.map(lang => (
+                <li key={lang.id}>{lang.name} {lang.level && `- ${lang.level}`}</li>
+              ))}
+            </List>
+          </Section>
+        )}
+
         {/* CERTIFICATES */}
-        <Section>
+        <Section id="certificates">
           <Heading>Certificates and Badges</Heading>
           <TableWrapper>
             <Table>
@@ -380,7 +468,7 @@ export default function AboutMore() {
                     </tr>
                   ))
                 ) : (
-                  <tr><td colspan="2">No certificates found.</td></tr>
+                  <tr><td colSpan="2">No certificates found.</td></tr>
                 )}
               </tbody>
             </Table>
@@ -397,7 +485,7 @@ export default function AboutMore() {
             aria-label="GitHub"
             target="_blank"
             rel="noopener noreferrer"
-            class="social-icon"
+            className="social-icon"
           >
             <img
               src="https://img.icons8.com/?size=100&id=12598&format=png&color=000000"
@@ -411,7 +499,7 @@ export default function AboutMore() {
             aria-label="GitHub"
             target="_blank"
             rel="noopener noreferrer"
-            class="social-icon"
+            className="social-icon"
           >
             <img
               src="https://img.icons8.com/?size=100&id=447&format=png&color=000000"
@@ -425,7 +513,7 @@ export default function AboutMore() {
             aria-label="Twitter"
             target="_blank"
             rel="noopener noreferrer"
-            class="social-icon"
+            className="social-icon"
           >
             <img
               src="https://img.icons8.com/?size=100&id=fJp7hepMryiw&format=png&color=000000"
@@ -439,7 +527,7 @@ export default function AboutMore() {
             aria-label="Instagram"
             target="_blank"
             rel="noopener noreferrer"
-            class="social-icon"
+            className="social-icon"
           >
             <img
               src="https://img.icons8.com/?size=100&id=eRJfQw0Zs44S&format=png&color=000000"
