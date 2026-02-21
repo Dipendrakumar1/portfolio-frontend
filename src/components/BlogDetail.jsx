@@ -1,116 +1,191 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { API_BASE_URL, getImageUrl } from "../api";
+import { theme, SiteContainer, GlassCard } from "../styles/GlobalStyles";
 
-const Page = styled.div`
-  background: #164f64ff;
-  color: #b2e2c5;
-  width: 100%;
-  min-height: 100vh;
-  font-family: "Fira Code", monospace;
-  padding: 40px 0;
+const ArticleHeader = styled.header`
+  margin-bottom: 40px;
+  text-align: center;
 `;
 
-const ImageFrame = styled.div`
-  border: 4px solid #8fdac2;
-  padding: 12px;
-  background: #2b3337;
-  max-width: 600px;
-  margin: 25px auto;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+const Title = styled.h1`
+  font-size: clamp(32px, 5vw, 48px);
+  margin-bottom: 16px;
+  color: ${theme.text};
+  line-height: 1.2;
+`;
 
+const Meta = styled.div`
+  font-size: 15px;
+  color: ${theme.textMuted};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  
+  span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+`;
+
+const HeroImageWrapper = styled.div`
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto 40px;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: ${theme.shadows.glass};
+  border: 1px solid ${theme.border};
+  
   img {
-    max-width: 100%;
+    width: 100%;
     height: auto;
     display: block;
+    max-height: 500px;
+    object-fit: cover;
   }
 `;
 
-const Container = styled.div`
-  width: 90%;
-  max-width: 1000px;
-  margin: auto;
-
-  @media (max-width: 768px) {
-    width: 95%;
+const ContentCard = styled(GlassCard)`
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 40px;
+  
+  @media (max-width: ${theme.breakpoints.tablet}) {
+    padding: 24px;
   }
 `;
 
-const Section = styled.div`
-  padding: 40px 0;
-  @media (max-width: 768px) {
-    padding: 20px 0;
-  }
-`;
-
-const Heading = styled.div`
-  font-size: 26px;
-  font-weight: bold;
-  color: #9ee3b1;
-  text-align: left;
-  @media (max-width: 768px) {
-    font-size: 20px;
-  }
-`;
-
-const Separator = styled.div`
-  color: #8fdac2;
-  margin: 15px 0 25px 0;
-  font-size: 14px;
-  white-space: nowrap;
-  overflow: hidden;
-  line-height: 1;
-  text-align: left;
-  max-width: 100%;
-`;
-
-const BlogMeta = styled.div`
-  margin-bottom: 25px;
-  font-size: 14px;
-  color: #8fdac2;
-  text-align: left;
-  @media (max-width: 768px) {
-    font-size: 12px;
-  }
-`;
-
-const BlogContent = styled.div`
+const BlogContent = styled.article`
   line-height: 1.8;
-  font-size: 16px;
+  font-size: 17px;
+  color: ${theme.text};
+  
+  h2, h3, h4 {
+    margin-top: 2em;
+    margin-bottom: 0.75em;
+    color: ${theme.text};
+  }
   
   p {
-    margin-bottom: 20px;
+    margin-bottom: 1.5em;
+    color: ${theme.textMuted};
+  }
+  
+  a {
+    color: ${theme.accent};
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    
+    &:hover {
+      color: ${theme.accentHover};
+    }
+  }
+  
+  ul, ol {
+    margin-bottom: 1.5em;
+    padding-left: 1.5em;
+    color: ${theme.textMuted};
+    
+    li {
+      margin-bottom: 0.5em;
+    }
+  }
+  
+  blockquote {
+    border-left: 4px solid ${theme.accent};
+    padding-left: 20px;
+    margin-left: 0;
+    margin-right: 0;
+    font-style: italic;
+    color: ${theme.textMuted};
+    background: rgba(255, 255, 255, 0.02);
+    padding: 20px;
+    border-radius: 0 8px 8px 0;
+  }
+  
+  pre, code {
+    font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+  }
+  
+  pre {
+    padding: 16px;
+    overflow-x: auto;
+    border: 1px solid ${theme.border};
+  }
+  
+  code {
+    padding: 2px 6px;
+    color: ${theme.accentHover};
+  }
+  
+  pre code {
+    padding: 0;
+    color: inherit;
   }
   
   img {
     max-width: 100%;
-    max-width: 500px;
     height: auto;
-    border: 4px solid #8fdac2;
-    padding: 12px;
-    background: #2b3337;
-    margin: 20px auto;
+    border-radius: 8px;
+    margin: 32px auto;
     display: block;
+    border: 1px solid ${theme.border};
+  }
+`;
+
+const LoadingContainer = styled.div`
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: ${theme.textMuted};
+  font-size: 18px;
+`;
+
+const BackLink = styled(Link)`
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: ${theme.textMuted};
+  margin-bottom: 32px;
+  font-weight: 500;
+  
+  &:before {
+    content: '←';
+    transition: transform 0.2s ease;
+  }
+  
+  &:hover {
+    color: ${theme.accent};
+    
+    &:before {
+      transform: translateX(-4px);
+    }
   }
 `;
 
 const Footer = styled.footer`
-  margin-top: 60px;
+  margin-top: 100px;
   text-align: center;
   padding: 40px 0;
-  border-top: 1px solid #4a5a5f;
-`;
+  border-top: 1px solid ${theme.border};
 
-const FooterLink = styled.a`
-  display: block;
-  margin-bottom: 20px;
-  color: #7ea288;
-  text-decoration: none;
-  font-weight: 500;
-  &:hover { color: #9ee3b1; }
+  a {
+    color: ${theme.textMuted};
+    text-decoration: none;
+    font-weight: 500;
+    
+    &:hover {
+      color: ${theme.accent};
+    }
+  }
 `;
 
 export default function BlogDetail() {
@@ -119,6 +194,7 @@ export default function BlogDetail() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     fetch(`${API_BASE_URL}/blogs/${slug}`)
       .then(res => res.json())
       .then(data => {
@@ -131,32 +207,52 @@ export default function BlogDetail() {
       });
   }, [slug]);
 
-  if (loading) return <Page><Container><Section><Heading>Loading blog...</Heading></Section></Container></Page>;
-  if (!blog) return <Page><Container><Section><Heading>Blog not found.</Heading></Section></Container></Page>;
+  if (loading) {
+    return (
+      <SiteContainer>
+        <LoadingContainer>Loading article...</LoadingContainer>
+      </SiteContainer>
+    );
+  }
+
+  if (!blog) {
+    return (
+      <SiteContainer>
+        <LoadingContainer>Article not found.</LoadingContainer>
+      </SiteContainer>
+    );
+  }
 
   return (
-    <Page>
-      <Container>
-        <Section>
-          <Heading>{blog.title}</Heading>
-          <Separator>--)::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::(--</Separator>
-          <BlogMeta>
-            {blog.published_at} · {blog.author} · {blog.read_time_min} min read
-          </BlogMeta>
+    <>
+      <SiteContainer>
+        <BackLink to="/blog">Back to all articles</BackLink>
 
-          {blog.hero_image && (
-            <ImageFrame>
-              <img src={getImageUrl(blog.hero_image)} alt={blog.title} />
-            </ImageFrame>
-          )}
+        <ArticleHeader>
+          <Title>{blog.title}</Title>
+          <Meta>
+            <span>{blog.published_at}</span>
+            <span>·</span>
+            <span>{blog.author}</span>
+            <span>·</span>
+            <span>{blog.read_time_min} min read</span>
+          </Meta>
+        </ArticleHeader>
 
+        {blog.hero_image && (
+          <HeroImageWrapper>
+            <img src={getImageUrl(blog.hero_image)} alt={blog.title} />
+          </HeroImageWrapper>
+        )}
+
+        <ContentCard>
           <BlogContent dangerouslySetInnerHTML={{ __html: blog.content }} />
-        </Section>
-      </Container>
+        </ContentCard>
+      </SiteContainer>
 
       <Footer>
-        <FooterLink href="/blog">[Back to Blogs] →</FooterLink>
+        <Link to="/blog">Read more articles →</Link>
       </Footer>
-    </Page>
+    </>
   );
 }

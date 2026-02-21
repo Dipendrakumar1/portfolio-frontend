@@ -1,47 +1,44 @@
 import React from 'react'
 import styled from 'styled-components'
-import { theme } from '../styles/GlobalStyles'
+import { theme, GradientText } from '../styles/GlobalStyles'
 
-const Col = styled.div`
-  flex: 1 1 0;
-  min-width: 200px;
-  max-width: 33%;
-
-  @media (max-width: ${theme.breakpoints.tablet}) {
-    max-width: 100%;
-    flex: 1 1 100%;
-    text-align: center;
-  }
+const HeaderWrap = styled.div`
+  margin-bottom: 24px;
+  text-align: center;
 `
 
 const Title = styled.h2`
-  font-size: 26px;
+  font-size: 32px;
+  margin: 0 0 12px 0;
   color: ${theme.text};
-  margin: 0 0 10px 0;
-  letter-spacing: 0.8px;
-`
-
-const Dots = styled.div`
-  color: ${theme.accent};
-  letter-spacing: 6px;
-  font-size: 18px;
-  margin-bottom: 12px;
-  white-space: nowrap;
-  overflow: hidden;
+  letter-spacing: -0.5px;
+  
+  @media (max-width: ${theme.breakpoints.tablet}) {
+    font-size: 28px;
+  }
 `
 
 const Subtitle = styled.div`
-  color: ${theme.subtitle};
-  margin-bottom: 28px;
+  color: ${theme.textMuted};
   font-size: 16px;
+  font-weight: 500;
 `
 
-export default function SectionHeader({ title, name }) {
+const Divider = styled.div`
+  height: 3px;
+  width: 60px;
+  background: ${theme.accentGradient};
+  border-radius: 2px;
+  margin: 0 auto 16px;
+`
+
+export default function SectionHeader({ title, name, as }) {
+  // Option to render as h1, h2, etc. Default to h2.
   return (
-    <Col>
-      <Title>{title}</Title>
-      <Dots>--)::::::(--</Dots>
-      <Subtitle>{name}</Subtitle>
-    </Col>
+    <HeaderWrap>
+      <Title as={as}>{title}</Title>
+      <Divider aria-hidden="true" />
+      {name && <Subtitle>{name}</Subtitle>}
+    </HeaderWrap>
   )
 }

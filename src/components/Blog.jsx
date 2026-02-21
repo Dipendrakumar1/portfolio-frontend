@@ -1,183 +1,165 @@
 import React, { useEffect, useState } from "react";
 import { API_BASE_URL, getImageUrl } from "../api";
 import styled from "styled-components";
+import { theme, SiteContainer, GradientText, GlassCard } from "../styles/GlobalStyles";
 
-const Page = styled.div`
-  background:#164f64ff;
-  color: #b2e2c5;
-  width: 100%;
-  min-height: 100vh;
-  font-family: "Fira Code", monospace;
-  padding: 40px 0;
-`;
+const HeroSection = styled.section`
+  padding: 60px 0 40px;
+  text-align: center;
+`
 
-const Navbar = styled.div`
-  display: flex;
-  gap: 20px;
-  padding: 20px;
-  background: #2b3337;
-  border-bottom: 2px solid #8fdac2;
-  position: sticky;
-  top: 0;
+const Title = styled.h1`
+  font-size: clamp(36px, 6vw, 56px);
+  margin-bottom: 24px;
+`
 
-  a {
-    padding: 6px 12px;
-    border: 1px solid #8fdac2;
-    border-radius: 4px;
-    color: #9ee3b1;
-    text-decoration: none;
+const Subtitle = styled.p`
+  font-size: 18px;
+  color: ${theme.textMuted};
+  max-width: 600px;
+  margin: 0 auto;
+`
 
-    &:hover {
-      color: #c1ffd2;
-    }
-  }
-`;
+const BlogGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 32px;
+  margin-top: 60px;
+`
 
-const Container = styled.div`
-  width: 90%;
-  max-width: 1000px;
-  margin: auto;
-  @media (max-width: 768px) {
-    width: 95%;
-  }
-`;
-
-const Section = styled.div`
-  padding: 40px 0;
-  @media (max-width: 768px) {
-    padding: 20px 0;
-  }
-`;
-
-const Heading = styled.div`
-  font-size: 22px;
-  font-weight: bold;
-  text-align: left;
-  @media (max-width: 768px) {
-    font-size: 18px;
-  }
-`;
-
-const Separator = styled.div`
-  color: #8fdac2;
-  margin: 10px 0 25px 0;
-  font-size: 14px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-align: left;
-`;
-
-const Paragraph = styled.p`
-  line-height: 1.7;
-  margin-bottom: 20px;
-  text-align: left;
-`;
-
-const ImageFrame = styled.div`
-  border: 4px solid #8fdac2;
-  padding: 12px;
-  background: #2b3337;
-  max-width: 500px;
-  margin: 25px auto;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  img {
-    max-width: 100%;
-    height: auto;
-    display: block;
-  }
-`;
-
-// Blog list styles
-const BlogList = styled.div`
-  margin-top: 20px;
-`;
-
-const BlogItem = styled.div`
-  margin-bottom: 35px;
+const BlogCard = styled(GlassCard)`
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  text-align: left;
-`;
-
-const BlogTitle = styled.a`
-  font-size: 18px;
-  color: #9ee3b1;
+  padding: 0;
+  overflow: hidden;
   text-decoration: none;
-  font-weight: bold;
+`
 
-  &:hover {
-    color: #c1ffd2;
+const BlogImageWrapper = styled.div`
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
   }
-`;
+  
+  ${BlogCard}:hover & img {
+    transform: scale(1.05);
+  }
+`
+
+const BlogContent = styled.div`
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+`
+
+const BlogTitle = styled.h3`
+  font-size: 22px;
+  margin: 0 0 12px 0;
+  color: ${theme.text};
+  line-height: 1.4;
+`
 
 const BlogMeta = styled.div`
-  margin: 8px 0 14px 0;
   font-size: 14px;
-  color: #8fdac2;
-`;
+  color: ${theme.textMuted};
+  margin-bottom: 16px;
+  font-family: ${theme.fontBody};
+`
 
 const BlogTeaser = styled.p`
-  margin-bottom: 14px;
+  font-size: 15px;
+  color: ${theme.textMuted};
   line-height: 1.6;
-  max-width: 800px;
-`;
+  margin-bottom: 24px;
+  flex-grow: 1;
+`
 
-const BlogThumbnailFrame = styled(ImageFrame)`
-  margin: 15px auto 0 auto;
-`;
+const ReadMore = styled.div`
+  font-size: 14px;
+  font-weight: 600;
+  color: ${theme.accent};
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  
+  &:after {
+    content: '→';
+    transition: transform 0.3s ease;
+  }
+  
+  ${BlogCard}:hover &:after {
+    transform: translateX(4px);
+  }
+`
 
-// Footer (same as AboutMore)
+// Footer
 const Footer = styled.footer`
-  margin-top: 60px;
+  margin-top: 100px;
   text-align: center;
   padding: 40px 0;
-  border-top: 1px solid #4a5a5f;
+  border-top: 1px solid ${theme.border};
 `;
 
 const FooterSeparator = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #7ea288;
-  margin-bottom: 15px;
+  color: ${theme.textMuted};
+  margin-bottom: 24px;
+  font-size: 14px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
 
   &:before,
   &:after {
     content: "";
     flex: 1;
-    border-bottom: 1px solid #7ea288;
-    margin: 0 10px;
+    border-bottom: 1px solid ${theme.border};
+    margin: 0 20px;
   }
 `;
 
 const FooterLink = styled.a`
-  display: block;
-  margin-bottom: 20px;
-  color: #7ea288;
+  display: inline-block;
+  margin-bottom: 32px;
+  color: ${theme.text};
   text-decoration: none;
   font-weight: 500;
+  font-size: 18px;
+  transition: color 0.2s ease;
 
   &:hover {
-    color: #9ee3b1;
+    color: ${theme.accent};
   }
 `;
 
 const SocialIcons = styled.div`
   display: flex;
   justify-content: center;
-  gap: 25px;
+  gap: 32px;
 
   a {
-    color: #7ea288;
-    font-size: 22px;
-    text-decoration: none;
+    transition: transform 0.2s ease;
 
     &:hover {
-      color: #9ee3b1;
+      transform: translateY(-4px);
+    }
+  }
+  
+  img {
+    filter: invert(1);
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+    
+    &:hover {
+      opacity: 1;
     }
   }
 `;
@@ -193,115 +175,60 @@ export default function Blog() {
   }, []);
 
   return (
-    <Page>
-      <Container>
-        {/* BLOG HEADER (hero) */}
-        <Section>
-          <Heading>Blogs</Heading>
-          <Separator>
-            --)::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::(--
-          </Separator>
-          <Paragraph>Dipendra Yadav :: {blogs.length} posts published</Paragraph>
+    <>
+      <HeroSection>
+        <Title>Tech <GradientText>Musings</GradientText></Title>
+        <Subtitle>Thoughts on software engineering, web development, and my professional journey.</Subtitle>
+      </HeroSection>
 
-          <ImageFrame>
-            <img src="img/blog-hero.jpg" alt="Blogs banner" />
-          </ImageFrame>
-        </Section>
-
-        {/* TABLE OF CONTENTS / BLOG LIST */}
-        <Section>
-          <Heading>Table of Contents</Heading>
-
-          <BlogList>
-            {blogs.length > 0 ? (
-              blogs.map((b) => (
-                <BlogItem key={b.id}>
-                  <BlogTitle href={`/blog/${b.slug}`}>
-                    {b.title}
-                  </BlogTitle>
+      <SiteContainer>
+        <BlogGrid>
+          {blogs.length > 0 ? (
+            blogs.map((b) => (
+              <BlogCard as="a" href={`/blog/${b.slug}`} key={b.id}>
+                {b.hero_image && (
+                  <BlogImageWrapper>
+                    <img src={getImageUrl(b.hero_image)} alt={b.title} loading="lazy" />
+                  </BlogImageWrapper>
+                )}
+                <BlogContent>
+                  <BlogTitle>{b.title}</BlogTitle>
                   <BlogMeta>
                     {b.published_at} · {b.read_time_min} min read
                   </BlogMeta>
                   <BlogTeaser>
-                    {b.subtitle || (b.content ? b.content.substring(0, 150) + "..." : "")}
+                    {b.subtitle || (b.content ? b.content.replace(/<[^>]+>/g, '').substring(0, 150) + "..." : "")}
                   </BlogTeaser>
-                  {b.hero_image && (
-                    <BlogThumbnailFrame>
-                      <img src={getImageUrl(b.hero_image)} alt={b.title} />
-                    </BlogThumbnailFrame>
-                  )}
-                </BlogItem>
-              ))
-            ) : (
-              <Paragraph>No blogs found.</Paragraph>
-            )}
-          </BlogList>
-        </Section>
-      </Container>
+                  <ReadMore>Read Article</ReadMore>
+                </BlogContent>
+              </BlogCard>
+            ))
+          ) : (
+            <div style={{ color: theme.textMuted, width: '100%', gridColumn: '1 / -1', textAlign: 'center', padding: '40px' }}>
+              No blogs found.
+            </div>
+          )}
+        </BlogGrid>
+      </SiteContainer>
 
-      {/* FOOTER */}
       <Footer>
         <FooterSeparator>READ OTHER POSTS</FooterSeparator>
-        <FooterLink href="#">[About Me] →</FooterLink>
+        <FooterLink href="/aboutme">About Me →</FooterLink>
         <SocialIcons>
-          <a
-            href="https://github.com/yourname"
-            aria-label="GitHub"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="social-icon"
-          >
-            <img
-              src="https://img.icons8.com/?size=100&id=12598&format=png&color=000000"
-              alt="GitHub"
-              width="32"
-              height="32"
-            />
+          <a href="https://github.com/yourname" target="_blank" rel="noopener noreferrer">
+            <img src="https://img.icons8.com/?size=100&id=12598&format=png&color=000000" alt="GitHub" width="28" height="28" />
           </a>
-          <a
-            href="https://github.com/yourname"
-            aria-label="GitHub"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="social-icon"
-          >
-            <img
-              src="https://img.icons8.com/?size=100&id=447&format=png&color=000000"
-              alt="LinkedIn"
-              width="32"
-              height="32"
-            />
+          <a href="https://linkedin.com/in/yourname" target="_blank" rel="noopener noreferrer">
+            <img src="https://img.icons8.com/?size=100&id=447&format=png&color=000000" alt="LinkedIn" width="28" height="28" />
           </a>
-          <a
-            href="https://github.com/yourname"
-            aria-label="Twitter"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="social-icon"
-          >
-            <img
-              src="https://img.icons8.com/?size=100&id=fJp7hepMryiw&format=png&color=000000"
-              alt="GitHub"
-              width="32"
-              height="32"
-            />
+          <a href="https://twitter.com/yourname" target="_blank" rel="noopener noreferrer">
+            <img src="https://img.icons8.com/?size=100&id=fJp7hepMryiw&format=png&color=000000" alt="Twitter" width="28" height="28" />
           </a>
-          <a
-            href="https://github.com/yourname"
-            aria-label="Instagram"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="social-icon"
-          >
-            <img
-              src="https://img.icons8.com/?size=100&id=eRJfQw0Zs44S&format=png&color=000000"
-              alt="GitHub"
-              width="32"
-              height="32"
-            />
+          <a href="https://instagram.com/yourname" target="_blank" rel="noopener noreferrer">
+            <img src="https://img.icons8.com/?size=100&id=eRJfQw0Zs44S&format=png&color=000000" alt="Instagram" width="28" height="28" />
           </a>
         </SocialIcons>
       </Footer>
-    </Page>
+    </>
   );
 }

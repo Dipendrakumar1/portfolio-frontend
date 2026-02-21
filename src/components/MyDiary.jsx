@@ -1,157 +1,164 @@
 import React, { useEffect, useState } from "react";
 import { API_BASE_URL } from "../api";
 import styled from "styled-components";
+import { theme, SiteContainer, GradientText, GlassCard } from "../styles/GlobalStyles";
 
-const Page = styled.div`
-   background:#164f64ff;
-  color: #b2e2c5;
-  width: 100%;
-  min-height: 100vh;
-  font-family: "Fira Code", monospace;
-  padding: 40px 0;
-`;
+const HeroSection = styled.section`
+  padding: 60px 0 40px;
+  text-align: center;
+`
 
-const Navbar = styled.div`
+const Title = styled.h1`
+  font-size: clamp(36px, 6vw, 56px);
+  margin-bottom: 24px;
+`
+
+const Subtitle = styled.p`
+  font-size: 18px;
+  color: ${theme.textMuted};
+  max-width: 600px;
+  margin: 0 auto;
+`
+
+const DiaryGrid = styled.div`
   display: flex;
-  gap: 20px;
-  padding: 20px;
-  background: #2b3337;
-  border-bottom: 2px solid #8fdac2;
-  position: sticky;
-  top: 0;
+  flex-direction: column;
+  gap: 40px;
+  margin-top: 60px;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+`
 
-  a {
-    padding: 6px 12px;
-    border: 1px solid #8fdac2;
-    border-radius: 4px;
-    color: #9ee3b1;
-    text-decoration: none;
-
-    &:hover {
-      color: #c1ffd2;
-    }
+const DiaryEntryCard = styled(GlassCard)`
+  display: flex;
+  flex-direction: column;
+  padding: 32px;
+  
+  @media (max-width: ${theme.breakpoints.mobile}) {
+    padding: 24px;
   }
-`;
+`
 
-const Container = styled.div`
-  width: 90%;
-  max-width: 1000px;
-  margin: auto;
-  @media (max-width: 768px) {
-    width: 95%;
+const DiaryHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  border-bottom: 1px solid ${theme.border};
+  padding-bottom: 16px;
+  margin-bottom: 24px;
+  
+  @media (max-width: ${theme.breakpoints.mobile}) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
   }
-`;
+`
 
-const Section = styled.div`
-  padding: 40px 0;
-  @media (max-width: 768px) {
-    padding: 20px 0;
-  }
-`;
-
-const Heading = styled.div`
-  font-size: 22px;
-  font-weight: bold;
-  @media (max-width: 768px) {
-    font-size: 18px;
-  }
-`;
-
-const Separator = styled.div`
-  color: #8fdac2;
-  margin: 10px 0 25px 0;
-  font-size: 14px;
-  white-space: nowrap;
-  overflow: hidden;
-`;
-
-// Diary list styles
-const DiaryEntry = styled.div`
-  margin-bottom: 60px;
-`;
-
-const DiaryTitle = styled.div`
-  font-size: 20px;
-  font-weight: bold;
-  color: #b2e2c5;
-`;
-
-const DiaryTitleSeparator = styled.div`
-  margin-top: 4px;
-  color: #8fdac2;
-  font-size: 12px;
-  white-space: nowrap;
-  overflow: hidden;
-`;
+const DiaryTitle = styled.h2`
+  font-size: 28px;
+  margin: 0;
+  color: ${theme.text};
+`
 
 const DiaryMeta = styled.div`
-  margin-top: 14px;
-  color: #8fdac2;
   font-size: 14px;
-`;
+  color: ${theme.accent};
+  font-family: ${theme.fontBody};
+`
 
 const DiaryBody = styled.p`
-  margin: 20px 0 18px 0;
+  font-size: 16px;
+  color: ${theme.textMuted};
   line-height: 1.7;
-`;
+  margin-bottom: 24px;
+`
 
 const ReadMore = styled.a`
-  color: #9ee3b1;
+  font-size: 15px;
+  font-weight: 600;
+  color: ${theme.accent};
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  align-self: flex-start;
   text-decoration: none;
-
-  &:hover {
-    color: #c1ffd2;
+  
+  &:after {
+    content: '→';
+    transition: transform 0.3s ease;
   }
-`;
+  
+  &:hover {
+    color: ${theme.accentHover};
+    
+    &:after {
+      transform: translateX(4px);
+    }
+  }
+`
 
-// Footer (same as others if you want it here too)
+// Footer
 const Footer = styled.footer`
-  margin-top: 60px;
+  margin-top: 100px;
   text-align: center;
   padding: 40px 0;
-  border-top: 1px solid #4a5a5f;
+  border-top: 1px solid ${theme.border};
 `;
 
 const FooterSeparator = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #7ea288;
-  margin-bottom: 15px;
+  color: ${theme.textMuted};
+  margin-bottom: 24px;
+  font-size: 14px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
 
   &:before,
   &:after {
     content: "";
     flex: 1;
-    border-bottom: 1px solid #7ea288;
-    margin: 0 10px;
+    border-bottom: 1px solid ${theme.border};
+    margin: 0 20px;
   }
 `;
 
 const FooterLink = styled.a`
-  display: block;
-  margin-bottom: 20px;
-  color: #7ea288;
+  display: inline-block;
+  margin-bottom: 32px;
+  color: ${theme.text};
   text-decoration: none;
   font-weight: 500;
+  font-size: 18px;
+  transition: color 0.2s ease;
 
   &:hover {
-    color: #9ee3b1;
+    color: ${theme.accent};
   }
 `;
 
 const SocialIcons = styled.div`
   display: flex;
   justify-content: center;
-  gap: 25px;
+  gap: 32px;
 
   a {
-    color: #7ea288;
-    font-size: 22px;
-    text-decoration: none;
+    transition: transform 0.2s ease;
 
     &:hover {
-      color: #9ee3b1;
+      transform: translateY(-4px);
+    }
+  }
+  
+  img {
+    filter: invert(1);
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+    
+    &:hover {
+      opacity: 1;
     }
   }
 `;
@@ -167,100 +174,51 @@ export default function MyDiary() {
   }, []);
 
   return (
-    <Page>
+    <>
+      <HeroSection>
+        <Title>My <GradientText>Diary</GradientText></Title>
+        <Subtitle>Monthly reflections, goals, and personal notes collected over time.</Subtitle>
+      </HeroSection>
 
-
-      <Container>
-        {/* HEADER */}
-        <Section>
-          <Heading>My Diary</Heading>
-          <Separator>
-            --)::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::(--
-          </Separator>
-        </Section>
-
-        {/* DIARY ENTRIES */}
-        <Section>
+      <SiteContainer>
+        <DiaryGrid>
           {diaries.length > 0 ? (
             diaries.map((d) => (
-              <DiaryEntry key={d.id}>
-                <DiaryTitle>{d.month_label}</DiaryTitle>
-                <DiaryTitleSeparator>
-                  --)::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::(--
-                </DiaryTitleSeparator>
-                <DiaryMeta>{d.date} :: {d.author}</DiaryMeta>
+              <DiaryEntryCard key={d.id}>
+                <DiaryHeader>
+                  <DiaryTitle>{d.month_label}</DiaryTitle>
+                  <DiaryMeta>{d.date} · {d.author}</DiaryMeta>
+                </DiaryHeader>
                 <DiaryBody>{d.summary}</DiaryBody>
-                <ReadMore href={`/mydiary/${d.slug}`}>[Read more]</ReadMore>
-              </DiaryEntry>
+                <ReadMore href={`/mydiary/${d.slug}`}>Open Entry</ReadMore>
+              </DiaryEntryCard>
             ))
           ) : (
-            <DiaryBody>No diary entries found.</DiaryBody>
+            <div style={{ color: theme.textMuted, width: '100%', textAlign: 'center', padding: '40px' }}>
+              No diary entries found.
+            </div>
           )}
-        </Section>
-      </Container>
+        </DiaryGrid>
+      </SiteContainer>
 
       <Footer>
         <FooterSeparator>READ OTHER POSTS</FooterSeparator>
-        <FooterLink href="/blog">[Blogs] →</FooterLink>
+        <FooterLink href="/blog">Read My Blog →</FooterLink>
         <SocialIcons>
-          <a
-            href="https://github.com/yourname"
-            aria-label="GitHub"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="social-icon"
-          >
-            <img
-              src="https://img.icons8.com/?size=100&id=12598&format=png&color=000000"
-              alt="GitHub"
-              width="32"
-              height="32"
-            />
+          <a href="https://github.com/yourname" target="_blank" rel="noopener noreferrer">
+            <img src="https://img.icons8.com/?size=100&id=12598&format=png&color=000000" alt="GitHub" width="28" height="28" />
           </a>
-          <a
-            href="https://github.com/yourname"
-            aria-label="GitHub"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="social-icon"
-          >
-            <img
-              src="https://img.icons8.com/?size=100&id=447&format=png&color=000000"
-              alt="LinkedIn"
-              width="32"
-              height="32"
-            />
+          <a href="https://linkedin.com/in/yourname" target="_blank" rel="noopener noreferrer">
+            <img src="https://img.icons8.com/?size=100&id=447&format=png&color=000000" alt="LinkedIn" width="28" height="28" />
           </a>
-          <a
-            href="https://github.com/yourname"
-            aria-label="Twitter"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="social-icon"
-          >
-            <img
-              src="https://img.icons8.com/?size=100&id=fJp7hepMryiw&format=png&color=000000"
-              alt="GitHub"
-              width="32"
-              height="32"
-            />
+          <a href="https://twitter.com/yourname" target="_blank" rel="noopener noreferrer">
+            <img src="https://img.icons8.com/?size=100&id=fJp7hepMryiw&format=png&color=000000" alt="Twitter" width="28" height="28" />
           </a>
-          <a
-            href="https://github.com/yourname"
-            aria-label="Instagram"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="social-icon"
-          >
-            <img
-              src="https://img.icons8.com/?size=100&id=eRJfQw0Zs44S&format=png&color=000000"
-              alt="GitHub"
-              width="32"
-              height="32"
-            />
+          <a href="https://instagram.com/yourname" target="_blank" rel="noopener noreferrer">
+            <img src="https://img.icons8.com/?size=100&id=eRJfQw0Zs44S&format=png&color=000000" alt="Instagram" width="28" height="28" />
           </a>
         </SocialIcons>
       </Footer>
-    </Page>
+    </>
   );
 }
