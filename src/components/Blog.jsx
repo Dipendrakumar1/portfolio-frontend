@@ -215,17 +215,20 @@ export default function Blog() {
         <FooterSeparator>READ OTHER POSTS</FooterSeparator>
         <FooterLink href="/aboutme">About Me →</FooterLink>
         <SocialIcons>
-          <a href="https://github.com/yourname" target="_blank" rel="noopener noreferrer">
+          <a href="https://github.com/Dipendrakumar1" target="_blank" rel="noopener noreferrer">
             <img src="https://img.icons8.com/?size=100&id=12598&format=png&color=000000" alt="GitHub" width="28" height="28" />
           </a>
-          <a href="https://linkedin.com/in/yourname" target="_blank" rel="noopener noreferrer">
+          <a href="https://www.linkedin.com/in/dipendra-kumar-yadav-37b663216/" target="_blank" rel="noopener noreferrer">
             <img src="https://img.icons8.com/?size=100&id=447&format=png&color=000000" alt="LinkedIn" width="28" height="28" />
           </a>
-          <a href="https://twitter.com/yourname" target="_blank" rel="noopener noreferrer">
+          <a href="https://x.com/Dipendr29983389?t=mohL1QRH8N9lYVLviSomfA&s=09" target="_blank" rel="noopener noreferrer">
             <img src="https://img.icons8.com/?size=100&id=fJp7hepMryiw&format=png&color=000000" alt="Twitter" width="28" height="28" />
           </a>
-          <a href="https://instagram.com/yourname" target="_blank" rel="noopener noreferrer">
+          <a href="https://www.linkedin.com/in/dipendra-kumar-yadav-37b663216/" target="_blank" rel="noopener noreferrer">
             <img src="https://img.icons8.com/?size=100&id=eRJfQw0Zs44S&format=png&color=000000" alt="Instagram" width="28" height="28" />
+          </a>
+          <a href="https://www.youtube.com/@DipendraKumarYadav-y3q" target="_blank" rel="noopener noreferrer">
+            <img src="https://img.icons8.com/?size=100&id=19318&format=png&color=000000" alt="YouTube" width="28" height="28" />
           </a>
         </SocialIcons>
       </Footer>

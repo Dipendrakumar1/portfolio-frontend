@@ -202,21 +202,21 @@ export default function DiaryDetail() {
         <FooterSeparator>READ OTHER POSTS</FooterSeparator>
         <FooterLink href="/mydiary">[Back to Diaries] →</FooterLink>
         <SocialIcons>
-          <a
-            href="https://github.com/yourname"
-            aria-label="GitHub"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="social-icon"
-          >
-            <img
-              src="https://img.icons8.com/?size=100&id=12598&format=png&color=000000"
-              alt="GitHub"
-              width="32"
-              height="32"
-            />
+          <a href="https://github.com/Dipendrakumar1" target="_blank" rel="noopener noreferrer">
+            <img src="https://img.icons8.com/?size=100&id=12598&format=png&color=000000" alt="GitHub" width="28" height="28" />
           </a>
-          {/* Add other icons based on preference */}
+          <a href="https://www.linkedin.com/in/dipendra-kumar-yadav-37b663216/" target="_blank" rel="noopener noreferrer">
+            <img src="https://img.icons8.com/?size=100&id=447&format=png&color=000000" alt="LinkedIn" width="28" height="28" />
+          </a>
+          <a href="https://x.com/Dipendr29983389?t=mohL1QRH8N9lYVLviSomfA&s=09" target="_blank" rel="noopener noreferrer">
+            <img src="https://img.icons8.com/?size=100&id=fJp7hepMryiw&format=png&color=000000" alt="Twitter" width="28" height="28" />
+          </a>
+          <a href="https://www.linkedin.com/in/dipendra-kumar-yadav-37b663216/" target="_blank" rel="noopener noreferrer">
+            <img src="https://img.icons8.com/?size=100&id=eRJfQw0Zs44S&format=png&color=000000" alt="Instagram" width="28" height="28" />
+          </a>
+          <a href="https://www.youtube.com/@DipendraKumarYadav-y3q" target="_blank" rel="noopener noreferrer">
+            <img src="https://img.icons8.com/?size=100&id=19318&format=png&color=000000" alt="YouTube" width="28" height="28" />
+          </a>
         </SocialIcons>
       </Footer>
     </Page>
