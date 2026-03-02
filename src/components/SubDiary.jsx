@@ -165,6 +165,9 @@ const Footer = styled.footer`
   }
 `;
 
+import ReactMarkdown from "react-markdown";
+import rehypeRaw from "rehype-raw";
+
 export default function SubDiary() {
   const { slug } = useParams();
   const [diary, setDiary] = useState(null);
@@ -217,7 +220,9 @@ export default function SubDiary() {
             <span>·</span>
             <span>{diary.word_count} words</span>
           </Meta>
-          <Summary>{diary.summary}</Summary>
+          <Summary>
+            <ReactMarkdown rehypePlugins={[rehypeRaw]}>{diary.summary}</ReactMarkdown>
+          </Summary>
         </ArticleHeader>
 
         <ContentCard>
@@ -241,7 +246,9 @@ export default function SubDiary() {
                 {s.bullets && (
                   <BulletList>
                     {s.bullets.map((b, bIdx) => (
-                      <li key={bIdx}>{b.text}</li>
+                      <li key={bIdx}>
+                        <ReactMarkdown rehypePlugins={[rehypeRaw]}>{b.text}</ReactMarkdown>
+                      </li>
                     ))}
                   </BulletList>
                 )}

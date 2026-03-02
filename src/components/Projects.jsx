@@ -314,6 +314,9 @@ const SocialIcons = styled.div`
   }
 `;
 
+import ReactMarkdown from "react-markdown";
+import rehypeRaw from "rehype-raw";
+
 export default function Projects() {
   const [projects, setProjects] = useState([]);
 
@@ -367,7 +370,9 @@ export default function Projects() {
               <ShortDesc>{p.short_description}</ShortDesc>
 
               {p.long_description && (
-                <ProjectContent dangerouslySetInnerHTML={{ __html: p.long_description }} />
+                <ProjectContent>
+                  <ReactMarkdown rehypePlugins={[rehypeRaw]}>{p.long_description}</ReactMarkdown>
+                </ProjectContent>
               )}
 
               <LinkGrid>

@@ -377,6 +377,9 @@ const SocialIcons = styled.div`
     }
   }
 `;
+import ReactMarkdown from "react-markdown";
+import rehypeRaw from "rehype-raw";
+
 export default function AboutMore() {
   const [about, setAbout] = useState(null);
   const [certs, setCerts] = useState([]);
@@ -473,7 +476,7 @@ export default function AboutMore() {
                 <img src={getImageUrl(about?.hero_image) || "img/profile.jpg"} alt="Profile" />
                 <div>
                   {about?.body ? (
-                    <span dangerouslySetInnerHTML={{ __html: about.body }} />
+                    <ReactMarkdown rehypePlugins={[rehypeRaw]}>{about.body}</ReactMarkdown>
                   ) : (
                     <p>Loading bio...</p>
                   )}

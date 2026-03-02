@@ -188,12 +188,74 @@ const Footer = styled.footer`
   }
 `;
 
+import ReactMarkdown from "react-markdown";
+import rehypeRaw from "rehype-raw";
+
+const LikeSection = styled.div`
+  margin-top: 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 32px;
+  border-top: 1px solid ${theme.border};
+`;
+
+const LikeButton = styled.button`
+  background: ${props => props.liked ? 'rgba(244, 63, 94, 0.15)' : 'rgba(255, 255, 255, 0.05)'};
+  border: 1px solid ${props => props.liked ? '#f43f5e' : theme.border};
+  color: ${props => props.liked ? '#f43f5e' : theme.text};
+  padding: 12px 24px;
+  border-radius: 50px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 18px;
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  
+  &:hover {
+    transform: translateY(-3px);
+    background: ${props => props.liked ? 'rgba(244, 63, 94, 0.2)' : 'rgba(255, 255, 255, 0.1)'};
+    box-shadow: ${theme.shadows.glass};
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  svg {
+    width: 24px;
+    height: 24px;
+    fill: ${props => props.liked ? '#f43f5e' : 'none'};
+    stroke: ${props => props.liked ? '#f43f5e' : 'currentColor'};
+    transition: all 0.3s ease;
+  }
+`;
+
 export default function BlogDetail() {
   const { slug } = useParams();
   const [blog, setBlog] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [liked, setLiked] = useState(false);
+  const [sessionId, setSessionId] = useState(null);
 
   useEffect(() => {
+    // Generate or get session ID
+    let sId = localStorage.getItem("visitor_session_id");
+    if (!sId) {
+      sId = Math.random().toString(36).substring(2) + Date.now().toString(36);
+      localStorage.setItem("visitor_session_id", sId);
+    }
+    setSessionId(sId);
+
+    // Check if liked from localStorage
+    const likedBlogs = JSON.parse(localStorage.getItem("liked_blogs") || "[]");
+    if (likedBlogs.includes(slug)) {
+      setLiked(true);
+    }
+
     window.scrollTo(0, 0);
     fetch(`${API_BASE_URL}/blogs/${slug}`)
       .then(res => res.json())
@@ -206,6 +268,24 @@ export default function BlogDetail() {
         setLoading(false);
       });
   }, [slug]);
+
+  const handleLike = () => {
+    if (liked) return;
+
+    fetch(`${API_BASE_URL}/blogs/${slug}/like`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ session_id: sessionId })
+    })
+      .then(res => res.json())
+      .then(data => {
+        setBlog(prev => ({ ...prev, likes: data.likes }));
+        setLiked(true);
+        const likedBlogs = JSON.parse(localStorage.getItem("liked_blogs") || "[]");
+        localStorage.setItem("liked_blogs", JSON.stringify([...likedBlogs, slug]));
+      })
+      .catch(err => console.error("Error liking blog:", err));
+  };
 
   if (loading) {
     return (
@@ -246,7 +326,21 @@ export default function BlogDetail() {
         )}
 
         <ContentCard>
-          <BlogContent dangerouslySetInnerHTML={{ __html: blog.content }} />
+          <BlogContent>
+            <ReactMarkdown rehypePlugins={[rehypeRaw]}>{blog.content}</ReactMarkdown>
+          </BlogContent>
+
+          <LikeSection>
+            <LikeButton liked={liked} onClick={handleLike}>
+              <svg viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l8.84-8.84 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+              </svg>
+              {liked ? 'Liked' : 'Like this post'}
+            </LikeButton>
+            <p style={{ color: theme.textMuted, fontSize: '14px' }}>
+              {blog.likes || 0} people liked this article
+            </p>
+          </LikeSection>
         </ContentCard>
       </SiteContainer>
 
