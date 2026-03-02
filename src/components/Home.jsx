@@ -180,7 +180,7 @@ export default function Home() {
           <a href="https://x.com/Dipendr29983389?t=mohL1QRH8N9lYVLviSomfA&s=09" target="_blank" rel="noopener noreferrer">
             <img src="https://img.icons8.com/?size=100&id=fJp7hepMryiw&format=png&color=000000" alt="Twitter" width="28" height="28" />
           </a>
-          <a href="https://www.linkedin.com/in/dipendra-kumar-yadav-37b663216/" target="_blank" rel="noopener noreferrer">
+          <a href="https://www.instagram.com/dipendrayad_?igsh=ZjFpNWQyeDlpZHZ6" target="_blank" rel="noopener noreferrer">
             <img src="https://img.icons8.com/?size=100&id=eRJfQw0Zs44S&format=png&color=000000" alt="Instagram" width="28" height="28" />
           </a>
           <a href="https://www.youtube.com/@DipendraKumarYadav-y3q" target="_blank" rel="noopener noreferrer">
