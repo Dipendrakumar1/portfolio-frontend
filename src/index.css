@@ -1,0 +1,12 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* global tweaks to match compact, clean personal site */
+:root{
+  --container-max: 980px;
+}
+html,body,#root { height:100%; }
+body { font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; color: #0f172a; }
+.container { max-width: var(--container-max); margin-left:auto; margin-right:auto; padding-left:1rem; padding-right:1rem; }
+a { color: inherit; }
