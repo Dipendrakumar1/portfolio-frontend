@@ -35,7 +35,7 @@ const Meta = styled.div`
 
 const HeroImageWrapper = styled.div`
   width: 100%;
-  max-width: 900px;
+  max-width: 1500px;
   margin: 0 auto 40px;
   border-radius: 16px;
   overflow: hidden;
@@ -46,18 +46,22 @@ const HeroImageWrapper = styled.div`
     width: 100%;
     height: auto;
     display: block;
-    max-height: 500px;
+    max-height: 590px;
     object-fit: cover;
   }
 `;
 
 const ContentCard = styled(GlassCard)`
-  max-width: 900px;
+  max-width: 1700px;
   margin: 0 auto;
-  padding: 56px;
-  
+  padding: 56px 48px;
+
   @media (max-width: ${theme.breakpoints.tablet}) {
-    padding: 32px 24px;
+    padding: 32px 20px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 20px 12px;
   }
 `;
 

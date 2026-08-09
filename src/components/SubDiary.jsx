@@ -42,12 +42,16 @@ const Summary = styled.p`
 `;
 
 const ContentCard = styled(GlassCard)`
-  max-width: 800px;
+  max-width: 1700px;
   margin: 0 auto;
-  padding: 40px;
-  
+  padding: 48px 40px;
+
   @media (max-width: ${theme.breakpoints.tablet}) {
-    padding: 24px;
+    padding: 28px 20px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 20px 16px;
   }
 `;
 
@@ -55,8 +59,16 @@ const TOCWrap = styled.div`
   margin-bottom: 60px;
   background: rgba(255, 255, 255, 0.02);
   border-radius: 12px;
-  padding: 24px;
+  padding: 32px 40px;
   border: 1px solid ${theme.border};
+
+  @media (max-width: ${theme.breakpoints.tablet}) {
+    padding: 24px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 20px 16px;
+  }
 `;
 
 const TOCHeading = styled.h3`

@@ -18,6 +18,16 @@ const MarkdownContent = styled.div`
   color: ${theme.text}; /* bright white-gray for readability */
   font-family: ${theme.fontBody};
 
+  @media (max-width: ${theme.breakpoints.tablet}) {
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 15px;
+    line-height: 1.5;
+  }
+
   /* ===== Headings ===== */
   h1, h2, h3, h4, h5, h6 {
     color: ${theme.text};
@@ -25,17 +35,44 @@ const MarkdownContent = styled.div`
     font-weight: 700;
     line-height: 1.25;
     letter-spacing: -0.01em;
-    margin-top: 2.5em;
-    margin-bottom: 1em;
+    margin-top: 1.75em;
+    margin-bottom: 0.75em;
 
     /* subtle glow on headings */
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
   }
 
-  h1 { font-size: 2.25rem; }
-  h2 { font-size: 1.75rem; }
-  h3 { font-size: 1.4rem; }
-  h4 { font-size: 1.2rem; }
+  h1 { 
+    font-size: clamp(28px, 5vw, 2.25rem);
+    
+    @media (max-width: 480px) {
+      font-size: 24px;
+    }
+  }
+  
+  h2 { 
+    font-size: clamp(22px, 4vw, 1.75rem);
+    
+    @media (max-width: 480px) {
+      font-size: 20px;
+    }
+  }
+  
+  h3 { 
+    font-size: clamp(18px, 3.5vw, 1.4rem);
+    
+    @media (max-width: 480px) {
+      font-size: 17px;
+    }
+  }
+  
+  h4 { 
+    font-size: clamp(16px, 3vw, 1.2rem);
+    
+    @media (max-width: 480px) {
+      font-size: 15px;
+    }
+  }
 
   /* accent underline for h2/h3 */
   h2, h3 {
@@ -57,7 +94,7 @@ const MarkdownContent = styled.div`
 
   /* ===== Paragraphs ===== */
   p {
-    margin-bottom: 1.5em;
+    margin-bottom: 1.25em;
     color: ${theme.text};
   }
 
@@ -78,17 +115,17 @@ const MarkdownContent = styled.div`
 
   /* ===== Lists ===== */
   ul, ol {
-    margin: 1.5em 0;
-    padding-left: 2rem;
+    margin: 1.25em 0;
+    padding-left: 1.5rem;
     color: ${theme.text};
 
     li {
-      margin-bottom: 0.6em;
-      line-height: 1.7;
+      margin-bottom: 0.5em;
+      line-height: 1.6;
     }
 
     p {
-      margin-bottom: 0.3em;
+      margin-bottom: 0.25em;
     }
   }
 
@@ -102,35 +139,35 @@ const MarkdownContent = styled.div`
 
   /* nested lists */
   ul ul, ol ol, ul ol, ol ul {
-    margin-top: 0.8em;
-    margin-bottom: 0.8em;
+    margin-top: 0.6em;
+    margin-bottom: 0.6em;
   }
 
   /* ===== Blockquotes ===== */
   blockquote {
     border-left: 4px solid ${theme.accent};
-    margin: 2em 0;
-    padding: 1.5em 2em;
+    margin: 1.5em 0;
+    padding: 1em 1.25em;
     background: rgba(56, 189, 248, 0.05);
-    border-radius: 0 12px 12px 0;
+    border-radius: 0 8px 8px 0;
     font-style: italic;
     color: ${theme.text};
-    line-height: 1.8;
+    line-height: 1.6;
     position: relative;
 
     &::before {
       content: """;
       position: absolute;
-      top: -12px;
-      left: 16px;
-      font-size: 48px;
+      top: -8px;
+      left: 8px;
+      font-size: 32px;
       color: rgba(56, 189, 248, 0.2);
       font-family: Georgia, serif;
       line-height: 1;
     }
 
     p {
-      margin-bottom: 0.5em;
+      margin-bottom: 0.4em;
     }
   }
 
@@ -145,8 +182,8 @@ const MarkdownContent = styled.div`
     background: rgba(15, 23, 42, 0.8);
     border: 1px solid ${theme.border};
     border-radius: 12px;
-    padding: 20px;
-    margin: 1.5em 0;
+    padding: 16px;
+    margin: 1.25em 0;
     overflow-x: auto;
     box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
 
@@ -154,7 +191,7 @@ const MarkdownContent = styled.div`
       background: transparent;
       padding: 0;
       color: #e2e8f0;
-      font-size: 14px;
+      font-size: 13px;
       line-height: 1.5;
       display: block;
       white-space: pre;
@@ -165,11 +202,11 @@ const MarkdownContent = styled.div`
   code {
     background: rgba(56, 189, 248, 0.1);
     border: 1px solid rgba(56, 189, 248, 0.2);
-    padding: 3px 8px;
+    padding: 2px 6px;
     border-radius: 4px;
-    font-size: 0.875em;
+    font-size: 0.85em;
     color: #7dd3fc;
-    line-height: 1.4;
+    line-height: 1.3;
     margin: 0 2px;
   }
 
@@ -178,7 +215,7 @@ const MarkdownContent = styled.div`
     max-width: 100%;
     height: auto;
     border-radius: 12px;
-    margin: 2em auto;
+    margin: 1.5em auto;
     display: block;
     border: 1px solid ${theme.border};
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
@@ -190,7 +227,7 @@ const MarkdownContent = styled.div`
   }
 
   figure {
-    margin: 2em 0;
+    margin: 1.5em 0;
     text-align: center;
 
     figcaption {
@@ -205,14 +242,14 @@ const MarkdownContent = styled.div`
   table {
     width: 100%;
     border-collapse: collapse;
-    margin: 1.5em 0;
+    margin: 1.25em 0;
     font-size: 15px;
     overflow: hidden;
     border-radius: 8px;
     border: 1px solid ${theme.border};
 
     th, td {
-      padding: 12px 16px;
+      padding: 10px 12px;
       text-align: left;
       border-bottom: 1px solid ${theme.border};
     }
@@ -241,7 +278,7 @@ const MarkdownContent = styled.div`
     border: none;
     height: 1px;
     background: ${theme.border};
-    margin: 2.5em 0;
+    margin: 2em 0;
   }
 
   /* ===== Strong / emphasis ===== */

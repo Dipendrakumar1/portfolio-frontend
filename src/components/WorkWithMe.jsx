@@ -42,7 +42,22 @@ const Grid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 32px;
-  margin-top: 40px;
+  margin: 40px auto 0;
+  max-width: 1400px;
+  width: 100%;
+  padding: 0 48px;
+  justify-items: center;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    padding: 0 16px;
+    gap: 20px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 0 8px;
+    gap: 16px;
+  }
 `
 
 const ContactCard = styled(GlassCard)`

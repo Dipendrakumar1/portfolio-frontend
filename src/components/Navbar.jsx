@@ -17,6 +17,7 @@ const TopRow = styled.header`
   z-index: 100;
   transition: all 0.3s ease;
   border-radius: ${({ $scrolled }) => $scrolled ? '0 0 16px 16px' : '0'};
+  animation: fadeInDown 0.6s ease-out;
 `
 
 const LogoWrapper = styled.div`

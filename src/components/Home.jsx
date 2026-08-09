@@ -5,7 +5,8 @@ import styled from 'styled-components'
 import SectionHeader from '../components/SectionHeader'
 import Card from '../components/Card'
 import Footer from '../components/Footer'
-import { theme, GradientText } from '../styles/GlobalStyles'
+import { theme, GradientText, SiteContainer, FadeInUp, StaggerContainer } from '../styles/GlobalStyles'
+import { useFadeIn } from '../hooks/useFadeIn'
 
 const HeroSection = styled.section`
   min-height: 60vh;
@@ -57,8 +58,22 @@ const CardsGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 32px;
-  margin-top: 40px;
+  margin: 0 auto;
+  max-width: 1400px;
   width: 100%;
+  padding: 0 48px;
+  justify-items: center;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    padding: 0 16px;
+    gap: 20px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 0 8px;
+    gap: 16px;
+  }
 `
 
 export default function Home() {
@@ -81,38 +96,42 @@ export default function Home() {
         <meta property="og:description" content="Software Developer Portfolio - Building dynamic and scalable web experiences" />
         <meta property="og:type" content="website" />
       </Helmet>
-      <HeroSection>
-        <HeroTitle>
-          Hi, I'm <GradientText>Dipendra Yadav</GradientText>
-        </HeroTitle>
-        <HeroSubtitle>
-          I build dynamic, beautiful, and scalable web experiences. Explore my portfolio to see what I've been working on.
-        </HeroSubtitle>
-      </HeroSection>
+      <SiteContainer>
+        <FadeInUp>
+          <HeroSection>
+            <HeroTitle>
+              Hi, I'm <GradientText>Dipendra Yadav</GradientText>
+            </HeroTitle>
+            <HeroSubtitle>
+              I build dynamic, beautiful, and scalable web experiences. Explore my portfolio to see what I've been working on.
+            </HeroSubtitle>
+          </HeroSection>
+        </FadeInUp>
 
-      <ContentSection>
-        <SectionHeader title="Featured Work" name="Some things I've built recently" />
+        <ContentSection>
+          <SectionHeader title="Featured Work" name="Some things I've built recently" />
 
-        <CardsGrid role="list" aria-label="feature cards">
-          {cards.length > 0 ? (
-            cards.map((c) => (
-              <Card
-                key={c.id}
-                src={getImageUrl(c.image_url)}
-                alt={c.alt_text}
-                title={c.title}
-                href={c.link_url}
-              />
-            ))
-          ) : (
-            <div style={{ color: theme.textMuted, width: '100%', gridColumn: '1 / -1', textAlign: 'center', padding: '40px' }}>
-              Loading projects...
-            </div>
-          )}
-        </CardsGrid>
-      </ContentSection>
+          <CardsGrid role="list" aria-label="feature cards">
+            {cards.length > 0 ? (
+              cards.map((c) => (
+                <Card
+                  key={c.id}
+                  src={getImageUrl(c.image_url)}
+                  alt={c.alt_text}
+                  title={c.title}
+                  href={c.link_url}
+                />
+              ))
+            ) : (
+              <div style={{ color: theme.textMuted, width: '100%', gridColumn: '1 / -1', textAlign: 'center', padding: '40px' }}>
+                Loading projects...
+              </div>
+            )}
+          </CardsGrid>
+        </ContentSection>
 
-      <Footer linkText="Explore My Diary →" linkTo="/mydiary" />
+        <Footer linkText="Explore My Diary →" linkTo="/mydiary" />
+      </SiteContainer>
     </>
   )
 }

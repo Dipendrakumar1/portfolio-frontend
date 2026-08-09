@@ -25,7 +25,7 @@ const Subtitle = styled.p`
 
 const HeroImageWrapper = styled.div`
   width: 100%;
-  max-width: 900px;
+  max-width: 1500px;
   margin: 40px auto 60px;
   border-radius: 16px;
   overflow: hidden;
@@ -36,16 +36,18 @@ const HeroImageWrapper = styled.div`
     width: 100%;
     height: auto;
     display: block;
-    max-height: 400px;
+    max-height: 590px;
     object-fit: cover;
   }
 `;
 
 const ContentGrid = styled.div`
   display: grid;
-  grid-template-columns: 250px 1fr;
-  gap: 40px;
+  grid-template-columns: 280px 1fr;
+  gap: 48px;
   align-items: start;
+  max-width: 1400px;
+  margin: 0 auto;
   
   @media (max-width: ${theme.breakpoints.tablet}) {
     grid-template-columns: 1fr;
@@ -154,7 +156,15 @@ const ProfileCard = styled(GlassCard)`
 `;
 
 const BlockCard = styled(GlassCard)`
-  padding: 32px;
+  padding: 40px 48px;
+
+  @media (max-width: ${theme.breakpoints.tablet}) {
+    padding: 28px 24px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 24px 20px;
+  }
 `;
 
 const BadgeContainer = styled.div`

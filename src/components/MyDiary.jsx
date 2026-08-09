@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Helmet } from 'react-helmet-async'
 import { API_BASE_URL } from "../api";
 import styled from "styled-components";
-import { theme, SiteContainer, GradientText, GlassCard } from "../styles/GlobalStyles";
+import { theme, SiteContainer, GradientText, GlassCard, FadeInUp, StaggerContainer } from "../styles/GlobalStyles";
 import Footer from '../components/Footer';
 
 const HeroSection = styled.section`
@@ -27,9 +27,80 @@ const DiaryGrid = styled.div`
   flex-direction: column;
   gap: 40px;
   margin-top: 60px;
-  max-width: 800px;
+  max-width: 1700px;
   margin-left: auto;
   margin-right: auto;
+  padding: 0 48px;
+
+  @media (max-width: ${theme.breakpoints.tablet}) {
+    padding: 0 20px;
+    gap: 32px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 0 8px;
+    gap: 24px;
+  }
+`
+
+const Pagination = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-top: 60px;
+  padding: 20px 0;
+
+  @media (max-width: 480px) {
+    gap: 8px;
+    margin-top: 40px;
+  }
+`
+
+const PageButton = styled.button`
+  min-width: 44px;
+  height: 44px;
+  padding: 0 16px;
+  border: 1px solid ${theme.border};
+  background: ${theme.bgCard};
+  color: ${theme.text};
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: ${theme.fontBody};
+
+  &:hover:not(:disabled) {
+    background: ${theme.accent};
+    color: white;
+    border-color: ${theme.accent};
+    transform: translateY(-2px);
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  &.active {
+    background: ${theme.accent};
+    color: white;
+    border-color: ${theme.accent};
+  }
+
+  @media (max-width: 480px) {
+    min-width: 40px;
+    height: 40px;
+    padding: 0 12px;
+    font-size: 14px;
+  }
+`
+
+const PageInfo = styled.span`
+  color: ${theme.textMuted};
+  font-size: 14px;
+  padding: 0 12px;
 `
 
 const DiaryEntryCard = styled(GlassCard)`
@@ -103,6 +174,8 @@ const ReadMore = styled.a`
 export default function MyDiary() {
   const [diaries, setDiaries] = useState([]);
   const [pageMeta, setPageMeta] = useState({});
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6;
 
   useEffect(() => {
     // Fetch diaries
@@ -118,6 +191,59 @@ export default function MyDiary() {
       .catch((err) => console.error("Error fetching diaries meta:", err));
   }, []);
 
+  // Pagination logic
+  const totalPages = Math.ceil(diaries.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentDiaries = diaries.slice(startIndex, endIndex);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handlePrevious = () => {
+    if (currentPage > 1) {
+      handlePageChange(currentPage - 1);
+    }
+  };
+
+  const handleNext = () => {
+    if (currentPage < totalPages) {
+      handlePageChange(currentPage + 1);
+    }
+  };
+
+  // Generate page numbers to display
+  const getPageNumbers = () => {
+    const pages = [];
+    const maxVisible = 5;
+    
+    if (totalPages <= maxVisible) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      if (currentPage <= 3) {
+        for (let i = 1; i <= 4; i++) pages.push(i);
+        pages.push('...');
+        pages.push(totalPages);
+      } else if (currentPage >= totalPages - 2) {
+        pages.push(1);
+        pages.push('...');
+        for (let i = totalPages - 3; i <= totalPages; i++) pages.push(i);
+      } else {
+        pages.push(1);
+        pages.push('...');
+        for (let i = currentPage - 1; i <= currentPage + 1; i++) pages.push(i);
+        pages.push('...');
+        pages.push(totalPages);
+      }
+    }
+    
+    return pages;
+  };
+
   return (
     <>
       <Helmet>
@@ -128,30 +254,70 @@ export default function MyDiary() {
         <meta property="og:description" content={pageMeta.description || "Monthly reflections, goals, and personal notes collected over time."} />
         <meta property="og:type" content="website" />
       </Helmet>
-      <HeroSection>
-        <Title>My <GradientText>Diary</GradientText></Title>
-        <Subtitle>{pageMeta.description || "Monthly reflections, goals, and personal notes collected over time."}</Subtitle>
-      </HeroSection>
+      <FadeInUp>
+        <HeroSection>
+          <Title>My <GradientText>Diary</GradientText></Title>
+          <Subtitle>{pageMeta.description || "Monthly reflections, goals, and personal notes collected over time."}</Subtitle>
+        </HeroSection>
+      </FadeInUp>
 
       <SiteContainer>
-        <DiaryGrid>
-          {diaries.length > 0 ? (
-            diaries.map((d) => (
-              <DiaryEntryCard key={d.id}>
-                <DiaryHeader>
-                  <DiaryTitle>{d.month_label}</DiaryTitle>
-                  <DiaryMeta>{d.date} · {d.author}</DiaryMeta>
-                </DiaryHeader>
-                <DiaryBody>{d.summary}</DiaryBody>
-                <ReadMore href={`/mydiary/${d.slug}`}>Open Entry</ReadMore>
-              </DiaryEntryCard>
-            ))
-          ) : (
-            <div style={{ color: theme.textMuted, width: '100%', textAlign: 'center', padding: '40px' }}>
-              No diary entries found.
-            </div>
-          )}
-        </DiaryGrid>
+        <StaggerContainer>
+          <DiaryGrid>
+            {currentDiaries.length > 0 ? (
+              currentDiaries.map((d) => (
+                <DiaryEntryCard key={d.id}>
+                  <DiaryHeader>
+                    <DiaryTitle>{d.month_label}</DiaryTitle>
+                    <DiaryMeta>{d.date} · {d.author}</DiaryMeta>
+                  </DiaryHeader>
+                  <DiaryBody>{d.summary}</DiaryBody>
+                  <ReadMore href={`/mydiary/${d.slug}`}>Open Entry</ReadMore>
+                </DiaryEntryCard>
+              ))
+            ) : (
+              <div style={{ color: theme.textMuted, width: '100%', textAlign: 'center', padding: '40px' }}>
+                No diary entries found.
+              </div>
+            )}
+          </DiaryGrid>
+        </StaggerContainer>
+
+        {totalPages > 1 && (
+          <Pagination>
+            <PageButton 
+              onClick={handlePrevious} 
+              disabled={currentPage === 1}
+              aria-label="Previous page"
+            >
+              ← Previous
+            </PageButton>
+
+            {getPageNumbers().map((page, index) => (
+              page === '...' ? (
+                <PageInfo key={`ellipsis-${index}`}>...</PageInfo>
+              ) : (
+                <PageButton
+                  key={page}
+                  onClick={() => handlePageChange(page)}
+                  className={currentPage === page ? 'active' : ''}
+                  aria-label={`Page ${page}`}
+                  aria-current={currentPage === page ? 'page' : undefined}
+                >
+                  {page}
+                </PageButton>
+              )
+            ))}
+
+            <PageButton 
+              onClick={handleNext} 
+              disabled={currentPage === totalPages}
+              aria-label="Next page"
+            >
+              Next →
+            </PageButton>
+          </Pagination>
+        )}
       </SiteContainer>
 
       <Footer linkText="Read My Blog →" linkTo="/blog" />
