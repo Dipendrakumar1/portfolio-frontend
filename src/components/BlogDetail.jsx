@@ -224,7 +224,7 @@ export default function BlogDetail() {
         <meta name="read_time" content={`${blog.read_time_min} min read`} />
         <link rel="canonical" href={`https://www.dipendrakumaryadav.com.np/blog/${blog.slug}`} />
         
-        <!-- Open Graph / Facebook -->
+        {/* Open Graph / Facebook */}
         <meta property="og:type" content="article" />
         <meta property="og:url" content={`https://www.dipendrakumaryadav.com.np/blog/${blog.slug}`} />
         <meta property="og:title" content={blog.title} />
@@ -234,18 +234,18 @@ export default function BlogDetail() {
         <meta property="article:published_time" content={blog.published_at} />
         <meta property="article:author" content={blog.author || "Dipendra Yadav"} />
         
-        <!-- Twitter -->
+        {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:url" content={`https://www.dipendrakumaryadav.com.np/blog/${blog.slug}`} />
         <meta name="twitter:title" content={blog.title} />
         <meta name="twitter:description" content={blog.subtitle || blog.content?.replace(/[#*`_\[\]\(\)]/g, '').substring(0, 160) || "Blog post"} />
         <meta name="twitter:image" content={blog.hero_image ? getImageUrl(blog.hero_image) : "https://www.dipendrakumaryadav.com.np/blog-og.jpg"} />
         
-        <!-- Additional SEO -->
+        {/* Additional SEO */}
         <meta name="robots" content="index, follow" />
         <meta name="googlebot" content="index, follow" />
         
-        <!-- Structured Data for Article -->
+        {/* Structured Data for Article */}
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",

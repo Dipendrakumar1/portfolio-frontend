@@ -253,7 +253,7 @@ export default function MyDiary() {
         <meta name="author" content="Dipendra Yadav" />
         <link rel="canonical" href="https://www.dipendrakumaryadav.com.np/mydiary" />
         
-        <!-- Open Graph / Facebook -->
+        {/* Open Graph / Facebook */}
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://www.dipendrakumaryadav.com.np/mydiary" />
         <meta property="og:title" content={pageMeta.title || 'My Diary - Personal Reflections'} />
@@ -261,14 +261,14 @@ export default function MyDiary() {
         <meta property="og:image" content="https://www.dipendrakumaryadav.com.np/diary-og.jpg" />
         <meta property="og:locale" content="en_US" />
         
-        <!-- Twitter -->
+        {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:url" content="https://www.dipendrakumaryadav.com.np/mydiary" />
         <meta name="twitter:title" content={pageMeta.title || 'My Diary - Personal Reflections'} />
         <meta name="twitter:description" content={pageMeta.description || "Monthly reflections, goals, and personal notes collected over time."} />
         <meta name="twitter:image" content="https://www.dipendrakumaryadav.com.np/diary-og.jpg" />
         
-        <!-- Additional SEO -->
+        {/* Additional SEO */}
         <meta name="robots" content="index, follow" />
         <meta name="googlebot" content="index, follow" />
       </Helmet>

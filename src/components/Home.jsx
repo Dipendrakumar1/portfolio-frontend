@@ -95,7 +95,7 @@ export default function Home() {
         <meta name="author" content="Dipendra Yadav" />
         <link rel="canonical" href="https://www.dipendrakumaryadav.com.np/" />
         
-        <!-- Open Graph / Facebook -->
+        {/* Open Graph / Facebook */}
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://www.dipendrakumaryadav.com.np/" />
         <meta property="og:title" content="Dipendra Yadav - Software Developer Portfolio" />
@@ -105,14 +105,14 @@ export default function Home() {
         <meta property="og:image:height" content="630" />
         <meta property="og:locale" content="en_US" />
         
-        <!-- Twitter -->
+        {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:url" content="https://www.dipendrakumaryadav.com.np/" />
         <meta name="twitter:title" content="Dipendra Yadav - Software Developer Portfolio" />
         <meta name="twitter:description" content="Software Developer Portfolio - Building dynamic and scalable web experiences with React, Node.js, and modern technologies." />
         <meta name="twitter:image" content="https://www.dipendrakumaryadav.com.np/og-image.jpg" />
         
-        <!-- Additional SEO -->
+        {/* Additional SEO */}
         <meta name="robots" content="index, follow" />
         <meta name="googlebot" content="index, follow" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -120,7 +120,7 @@ export default function Home() {
         <meta name="language" content="English" />
         <meta name="revisit-after" content="7 days" />
         
-        <!-- Structured Data / JSON-LD -->
+        {/* Structured Data / JSON-LD */}
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
