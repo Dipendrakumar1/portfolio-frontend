@@ -1,8 +1,11 @@
 {
   "rewrites": [
-    {
-      "source": "/((?!sitemap.xml|robots.txt|.well-known|.*\\.(jpg|jpeg|gif|css|js|png|svg|webp|ico|txt|xml|json)$).*)",
-      "destination": "/index.html"
-    }
+    { "source": "/aboutme", "destination": "/index.html" },
+    { "source": "/blog", "destination": "/index.html" },
+    { "source": "/blog/:slug", "destination": "/index.html" },
+    { "source": "/mydiary", "destination": "/index.html" },
+    { "source": "/mydiary/:slug", "destination": "/index.html" },
+    { "source": "/projects", "destination": "/index.html" },
+    { "source": "/hire-me", "destination": "/index.html" }
   ]
 }
