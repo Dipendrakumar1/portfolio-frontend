@@ -1,0 +1,28 @@
+# robots.txt for www.dipendrakumaryadav.com.np
+
+# Allow all crawlers
+User-agent: *
+Allow: /
+
+# Disallow admin or private paths (if any)
+Disallow: /private/
+Disallow: /api/
+
+# Sitemap location
+Sitemap: https://www.dipendrakumaryadav.com.np/sitemap.xml
+
+# Crawl delay (optional - be respectful)
+Crawl-delay: 1
+
+# Specific rules for major search engines
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 1
+
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1
+
+User-agent: Slurp
+Allow: /
+Crawl-delay: 1

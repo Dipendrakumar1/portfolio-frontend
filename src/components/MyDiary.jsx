@@ -249,10 +249,28 @@ export default function MyDiary() {
       <Helmet>
         <title>{pageMeta.title || 'My Diary - Personal Reflections'}</title>
         <meta name="description" content={pageMeta.description || "Monthly reflections, goals, and personal notes collected over time."} />
-        <meta name="keywords" content="diary, personal, reflections, goals, Dipendra Yadav" />
+        <meta name="keywords" content="diary, personal reflections, goals, Dipendra Yadav, personal development, monthly journal, life updates" />
+        <meta name="author" content="Dipendra Yadav" />
+        <link rel="canonical" href="https://www.dipendrakumaryadav.com.np/mydiary" />
+        
+        <!-- Open Graph / Facebook -->
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://www.dipendrakumaryadav.com.np/mydiary" />
         <meta property="og:title" content={pageMeta.title || 'My Diary - Personal Reflections'} />
         <meta property="og:description" content={pageMeta.description || "Monthly reflections, goals, and personal notes collected over time."} />
-        <meta property="og:type" content="website" />
+        <meta property="og:image" content="https://www.dipendrakumaryadav.com.np/diary-og.jpg" />
+        <meta property="og:locale" content="en_US" />
+        
+        <!-- Twitter -->
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content="https://www.dipendrakumaryadav.com.np/mydiary" />
+        <meta name="twitter:title" content={pageMeta.title || 'My Diary - Personal Reflections'} />
+        <meta name="twitter:description" content={pageMeta.description || "Monthly reflections, goals, and personal notes collected over time."} />
+        <meta name="twitter:image" content="https://www.dipendrakumaryadav.com.np/diary-og.jpg" />
+        
+        <!-- Additional SEO -->
+        <meta name="robots" content="index, follow" />
+        <meta name="googlebot" content="index, follow" />
       </Helmet>
       <FadeInUp>
         <HeroSection>

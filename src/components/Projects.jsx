@@ -415,10 +415,43 @@ export default function Projects() {
       <Helmet>
         <title>{pageMeta.title || 'My Projects - Portfolio'}</title>
         <meta name="description" content={pageMeta.description || "A showcase of my recent work, side projects, and open-source contributions."} />
-        <meta name="keywords" content="projects, portfolio, open source, web development, Dipendra Yadav" />
+        <meta name="keywords" content="projects, portfolio, open source, web development, Dipendra Yadav, software projects, coding projects, React projects" />
+        <meta name="author" content="Dipendra Yadav" />
+        <link rel="canonical" href="https://www.dipendrakumaryadav.com.np/projects" />
+        
+        <!-- Open Graph / Facebook -->
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://www.dipendrakumaryadav.com.np/projects" />
         <meta property="og:title" content={pageMeta.title || 'My Projects - Portfolio'} />
         <meta property="og:description" content={pageMeta.description || "A showcase of my recent work, side projects, and open-source contributions."} />
-        <meta property="og:type" content="website" />
+        <meta property="og:image" content="https://www.dipendrakumaryadav.com.np/projects-og.jpg" />
+        <meta property="og:locale" content="en_US" />
+        
+        <!-- Twitter -->
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content="https://www.dipendrakumaryadav.com.np/projects" />
+        <meta name="twitter:title" content={pageMeta.title || 'My Projects - Portfolio'} />
+        <meta name="twitter:description" content={pageMeta.description || "A showcase of my recent work, side projects, and open-source contributions."} />
+        <meta name="twitter:image" content="https://www.dipendrakumaryadav.com.np/projects-og.jpg" />
+        
+        <!-- Additional SEO -->
+        <meta name="robots" content="index, follow" />
+        <meta name="googlebot" content="index, follow" />
+        
+        <!-- Structured Data -->
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "CollectionPage",
+            "name": "My Projects",
+            "description": pageMeta.description || "A showcase of my recent work, side projects, and open-source contributions.",
+            "url": "https://www.dipendrakumaryadav.com.np/projects",
+            "author": {
+              "@type": "Person",
+              "name": "Dipendra Yadav"
+            }
+          })}
+        </script>
       </Helmet>
       <HeroSection>
         <Title>My <GradientText>Projects</GradientText></Title>

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Helmet } from 'react-helmet-async'
-import styled from "styled-components";
 import { useParams, Link } from "react-router-dom";
 import { API_BASE_URL, getImageUrl } from "../api";
-import { theme, SiteContainer, GlassCard } from "../styles/GlobalStyles";
+import styled from "styled-components";
+import { theme, SiteContainer, GradientText, GlassCard } from "../styles/GlobalStyles";
 
 const ArticleHeader = styled.header`
   margin-bottom: 40px;
@@ -216,11 +216,56 @@ export default function BlogDetail() {
   return (
     <>
       <Helmet>
-        <title>{blog.title} - Tech Musings</title>
+        <title>{blog.title} - Tech Musings | Dipendra Yadav</title>
         <meta name="description" content={blog.subtitle || blog.content?.replace(/[#*`_\[\]\(\)]/g, '').substring(0, 160) || "Blog post"} />
+        <meta name="keywords" content={`${blog.title}, blog, tech musings, Dipendra Yadav, software engineering, web development`} />
+        <meta name="author" content={blog.author || "Dipendra Yadav"} />
+        <meta name="published_date" content={blog.published_at} />
+        <meta name="read_time" content={`${blog.read_time_min} min read`} />
+        <link rel="canonical" href={`https://www.dipendrakumaryadav.com.np/blog/${blog.slug}`} />
+        
+        <!-- Open Graph / Facebook -->
+        <meta property="og:type" content="article" />
+        <meta property="og:url" content={`https://www.dipendrakumaryadav.com.np/blog/${blog.slug}`} />
         <meta property="og:title" content={blog.title} />
         <meta property="og:description" content={blog.subtitle || blog.content?.replace(/[#*`_\[\]\(\)]/g, '').substring(0, 160) || "Blog post"} />
-        <meta property="og:type" content="article" />
+        <meta property="og:image" content={blog.hero_image ? getImageUrl(blog.hero_image) : "https://www.dipendrakumaryadav.com.np/blog-og.jpg"} />
+        <meta property="og:locale" content="en_US" />
+        <meta property="article:published_time" content={blog.published_at} />
+        <meta property="article:author" content={blog.author || "Dipendra Yadav"} />
+        
+        <!-- Twitter -->
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content={`https://www.dipendrakumaryadav.com.np/blog/${blog.slug}`} />
+        <meta name="twitter:title" content={blog.title} />
+        <meta name="twitter:description" content={blog.subtitle || blog.content?.replace(/[#*`_\[\]\(\)]/g, '').substring(0, 160) || "Blog post"} />
+        <meta name="twitter:image" content={blog.hero_image ? getImageUrl(blog.hero_image) : "https://www.dipendrakumaryadav.com.np/blog-og.jpg"} />
+        
+        <!-- Additional SEO -->
+        <meta name="robots" content="index, follow" />
+        <meta name="googlebot" content="index, follow" />
+        
+        <!-- Structured Data for Article -->
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Article",
+            "headline": blog.title,
+            "description": blog.subtitle || blog.content?.replace(/[#*`_\[\]\(\)]/g, '').substring(0, 160),
+            "image": blog.hero_image ? getImageUrl(blog.hero_image) : "https://www.dipendrakumaryadav.com.np/blog-og.jpg",
+            "url": `https://www.dipendrakumaryadav.com.np/blog/${blog.slug}`,
+            "datePublished": blog.published_at,
+            "author": {
+              "@type": "Person",
+              "name": blog.author || "Dipendra Yadav"
+            },
+            "publisher": {
+              "@type": "Person",
+              "name": "Dipendra Yadav",
+              "url": "https://www.dipendrakumaryadav.com.np"
+            }
+          })}
+        </script>
       </Helmet>
       <SiteContainer>
         <BackLink to="/blog">Back to all articles</BackLink>

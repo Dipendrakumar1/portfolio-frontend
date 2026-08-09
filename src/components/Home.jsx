@@ -89,12 +89,58 @@ export default function Home() {
   return (
     <>
       <Helmet>
-        <title>Dipendra Yadav - Portfolio</title>
-        <meta name="description" content="Portfolio of Dipendra Yadav - Software Developer specializing in React, Node.js, and modern web technologies." />
-        <meta name="keywords" content="Dipendra Yadav, portfolio, web developer, React, Node.js, software engineer" />
-        <meta property="og:title" content="Dipendra Yadav - Portfolio" />
-        <meta property="og:description" content="Software Developer Portfolio - Building dynamic and scalable web experiences" />
+        <title>Dipendra Yadav - Software Developer Portfolio | React, Node.js, Web Development</title>
+        <meta name="description" content="Portfolio of Dipendra Yadav - Software Developer specializing in React, Node.js, and modern web technologies. Explore projects, blog posts, and professional journey." />
+        <meta name="keywords" content="Dipendra Yadav, portfolio, web developer, React, Node.js, software engineer, full stack developer, JavaScript, web development, Dipendra Yadav portfolio" />
+        <meta name="author" content="Dipendra Yadav" />
+        <link rel="canonical" href="https://www.dipendrakumaryadav.com.np/" />
+        
+        <!-- Open Graph / Facebook -->
         <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://www.dipendrakumaryadav.com.np/" />
+        <meta property="og:title" content="Dipendra Yadav - Software Developer Portfolio" />
+        <meta property="og:description" content="Software Developer Portfolio - Building dynamic and scalable web experiences with React, Node.js, and modern technologies." />
+        <meta property="og:image" content="https://www.dipendrakumaryadav.com.np/og-image.jpg" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:locale" content="en_US" />
+        
+        <!-- Twitter -->
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content="https://www.dipendrakumaryadav.com.np/" />
+        <meta name="twitter:title" content="Dipendra Yadav - Software Developer Portfolio" />
+        <meta name="twitter:description" content="Software Developer Portfolio - Building dynamic and scalable web experiences with React, Node.js, and modern technologies." />
+        <meta name="twitter:image" content="https://www.dipendrakumaryadav.com.np/og-image.jpg" />
+        
+        <!-- Additional SEO -->
+        <meta name="robots" content="index, follow" />
+        <meta name="googlebot" content="index, follow" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta httpEquiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta name="language" content="English" />
+        <meta name="revisit-after" content="7 days" />
+        
+        <!-- Structured Data / JSON-LD -->
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Person",
+            "name": "Dipendra Yadav",
+            "url": "https://www.dipendrakumaryadav.com.np",
+            "image": "https://www.dipendrakumaryadav.com.np/profile.jpg",
+            "jobTitle": "Software Developer",
+            "worksFor": {
+              "@type": "Organization",
+              "name": "Freelance"
+            },
+            "sameAs": [
+              "https://github.com/dipendra-yadav",
+              "https://linkedin.com/in/dipendra-yadav",
+              "https://twitter.com/dipendra_yadav"
+            ],
+            "knowsAbout": ["React", "Node.js", "JavaScript", "Web Development", "Full Stack Development"]
+          })}
+        </script>
       </Helmet>
       <SiteContainer>
         <FadeInUp>
@@ -135,3 +181,4 @@ export default function Home() {
     </>
   )
 }
+

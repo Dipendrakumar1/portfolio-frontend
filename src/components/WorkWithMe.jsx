@@ -208,12 +208,30 @@ export default function WorkWithMe() {
   return (
     <SiteContainer>
       <Helmet>
-        <title>Hire Me - Let's Work Together</title>
-        <meta name="description" content="Available for freelance work and interesting projects. Let's build something amazing together." />
-        <meta name="keywords" content="hire, freelance, work, projects, Dipendra Yadav" />
-        <meta property="og:title" content="Hire Me - Let's Work Together" />
-        <meta property="og:description" content="Available for freelance work and interesting projects." />
+        <title>Hire Me - Let's Work Together | Freelance Developer</title>
+        <meta name="description" content="Available for freelance work and interesting projects. Let's build something amazing together. Contact Dipendra Yadav for web development services." />
+        <meta name="keywords" content="hire, freelance, web developer, React developer, Node.js developer, Dipendra Yadav, hire developer, freelance web developer" />
+        <meta name="author" content="Dipendra Yadav" />
+        <link rel="canonical" href="https://www.dipendrakumaryadav.com.np/hire-me" />
+        
+        <!-- Open Graph / Facebook -->
         <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://www.dipendrakumaryadav.com.np/hire-me" />
+        <meta property="og:title" content="Hire Me - Let's Work Together" />
+        <meta property="og:description" content="Available for freelance work and interesting projects. Let's build something amazing together." />
+        <meta property="og:image" content="https://www.dipendrakumaryadav.com.np/hire-og.jpg" />
+        <meta property="og:locale" content="en_US" />
+        
+        <!-- Twitter -->
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content="https://www.dipendrakumaryadav.com.np/hire-me" />
+        <meta name="twitter:title" content="Hire Me - Let's Work Together" />
+        <meta name="twitter:description" content="Available for freelance work and interesting projects." />
+        <meta name="twitter:image" content="https://www.dipendrakumaryadav.com.np/hire-og.jpg" />
+        
+        <!-- Additional SEO -->
+        <meta name="robots" content="index, follow" />
+        <meta name="googlebot" content="index, follow" />
       </Helmet>
       <HeroSection>
         <Title>Let's Build Something <GradientText>Amazing Together</GradientText></Title>

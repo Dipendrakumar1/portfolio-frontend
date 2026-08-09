@@ -257,10 +257,43 @@ export default function Blog() {
       <Helmet>
         <title>{pageMeta.title || 'Tech Musings - Blog'}</title>
         <meta name="description" content={pageMeta.description || "Thoughts on software engineering, web development, and my professional journey."} />
-        <meta name="keywords" content="blog, tech musings, software engineering, web development, Dipendra Yadav" />
+        <meta name="keywords" content="blog, tech musings, software engineering, web development, Dipendra Yadav, programming, technology blog" />
+        <meta name="author" content="Dipendra Yadav" />
+        <link rel="canonical" href="https://www.dipendrakumaryadav.com.np/blog" />
+        
+        <!-- Open Graph / Facebook -->
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://www.dipendrakumaryadav.com.np/blog" />
         <meta property="og:title" content={pageMeta.title || 'Tech Musings - Blog'} />
         <meta property="og:description" content={pageMeta.description || "Thoughts on software engineering, web development, and my professional journey."} />
-        <meta property="og:type" content="website" />
+        <meta property="og:image" content="https://www.dipendrakumaryadav.com.np/blog-og.jpg" />
+        <meta property="og:locale" content="en_US" />
+        
+        <!-- Twitter -->
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content="https://www.dipendrakumaryadav.com.np/blog" />
+        <meta name="twitter:title" content={pageMeta.title || 'Tech Musings - Blog'} />
+        <meta name="twitter:description" content={pageMeta.description || "Thoughts on software engineering, web development, and my professional journey."} />
+        <meta name="twitter:image" content="https://www.dipendrakumaryadav.com.np/blog-og.jpg" />
+        
+        <!-- Additional SEO -->
+        <meta name="robots" content="index, follow" />
+        <meta name="googlebot" content="index, follow" />
+        
+        <!-- Structured Data -->
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Blog",
+            "name": "Tech Musings",
+            "description": pageMeta.description || "Thoughts on software engineering, web development, and my professional journey.",
+            "url": "https://www.dipendrakumaryadav.com.np/blog",
+            "author": {
+              "@type": "Person",
+              "name": "Dipendra Yadav"
+            }
+          })}
+        </script>
       </Helmet>
       <FadeInUp>
         <HeroSection>
