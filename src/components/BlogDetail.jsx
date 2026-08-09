@@ -230,6 +230,8 @@ export default function BlogDetail() {
         <meta property="og:title" content={blog.title} />
         <meta property="og:description" content={blog.subtitle || blog.content?.replace(/[#*`_\[\]\(\)]/g, '').substring(0, 160) || "Blog post"} />
         <meta property="og:image" content={blog.hero_image ? getImageUrl(blog.hero_image) : "https://www.dipendrakumaryadav.com.np/blog-og.jpg"} />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
         <meta property="og:locale" content="en_US" />
         <meta property="article:published_time" content={blog.published_at} />
         <meta property="article:author" content={blog.author || "Dipendra Yadav"} />
@@ -253,6 +255,10 @@ export default function BlogDetail() {
             "headline": blog.title,
             "description": blog.subtitle || blog.content?.replace(/[#*`_\[\]\(\)]/g, '').substring(0, 160),
             "image": blog.hero_image ? getImageUrl(blog.hero_image) : "https://www.dipendrakumaryadav.com.np/blog-og.jpg",
+            "mainEntityOfPage": {
+              "@type": "WebPage",
+              "@id": `https://www.dipendrakumaryadav.com.np/blog/${blog.slug}`
+            },
             "url": `https://www.dipendrakumaryadav.com.np/blog/${blog.slug}`,
             "datePublished": blog.published_at,
             "author": {
@@ -263,7 +269,8 @@ export default function BlogDetail() {
               "@type": "Person",
               "name": "Dipendra Yadav",
               "url": "https://www.dipendrakumaryadav.com.np"
-            }
+            },
+            "keywords": `${blog.title}, blog, tech musings, Dipendra Yadav, software engineering, web development`
           })}
         </script>
       </Helmet>

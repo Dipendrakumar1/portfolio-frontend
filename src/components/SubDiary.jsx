@@ -207,11 +207,56 @@ export default function SubDiary() {
   return (
     <>
       <Helmet>
-        <title>{diary.month_label} - My Diary</title>
+        <title>{diary.month_label} - My Diary | Dipendra Yadav</title>
         <meta name="description" content={diary.summary?.replace(/[#*`_\[\]\(\)]/g, '').substring(0, 160) || "Personal diary entry"} />
-        <meta property="og:title" content={diary.month_label} />
-        <meta property="og:description" content={diary.summary?.replace(/[#*`_\[\]\(\)]/g, '').substring(0, 160) || "Personal diary entry"} />
+        <meta name="keywords" content={`diary, ${diary.month_label}, Dipendra Yadav, personal reflections, personal development, monthly journal, life updates`} />
+        <meta name="author" content={diary.author || "Dipendra Yadav"} />
+        <link rel="canonical" href={`https://www.dipendrakumaryadav.com.np/mydiary/${diary.slug}`} />
+        
+        {/* Open Graph / Facebook */}
         <meta property="og:type" content="article" />
+        <meta property="og:url" content={`https://www.dipendrakumaryadav.com.np/mydiary/${diary.slug}`} />
+        <meta property="og:title" content={`${diary.month_label} - My Diary`} />
+        <meta property="og:description" content={diary.summary?.replace(/[#*`_\[\]\(\)]/g, '').substring(0, 160) || "Personal diary entry"} />
+        <meta property="og:image" content="https://www.dipendrakumaryadav.com.np/diary-og.jpg" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:locale" content="en_US" />
+        <meta property="article:published_time" content={diary.date} />
+        <meta property="article:author" content={diary.author || "Dipendra Yadav"} />
+        
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content={`https://www.dipendrakumaryadav.com.np/mydiary/${diary.slug}`} />
+        <meta name="twitter:title" content={`${diary.month_label} - My Diary`} />
+        <meta name="twitter:description" content={diary.summary?.replace(/[#*`_\[\]\(\)]/g, '').substring(0, 160) || "Personal diary entry"} />
+        <meta name="twitter:image" content="https://www.dipendrakumaryadav.com.np/diary-og.jpg" />
+        
+        {/* Additional SEO */}
+        <meta name="robots" content="index, follow" />
+        <meta name="googlebot" content="index, follow" />
+        
+        {/* Structured Data for Article */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Article",
+            "headline": diary.month_label,
+            "description": diary.summary?.replace(/[#*`_\[\]\(\)]/g, '').substring(0, 160) || "Personal diary entry",
+            "image": "https://www.dipendrakumaryadav.com.np/diary-og.jpg",
+            "url": `https://www.dipendrakumaryadav.com.np/mydiary/${diary.slug}`,
+            "datePublished": diary.date,
+            "author": {
+              "@type": "Person",
+              "name": diary.author || "Dipendra Yadav"
+            },
+            "publisher": {
+              "@type": "Person",
+              "name": "Dipendra Yadav",
+              "url": "https://www.dipendrakumaryadav.com.np"
+            }
+          })}
+        </script>
       </Helmet>
       <SiteContainer>
         <BackLink to="/mydiary">Back to all entries</BackLink>

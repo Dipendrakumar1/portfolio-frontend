@@ -383,12 +383,52 @@ export default function AboutMore() {
   return (
     <>
       <Helmet>
-        <title>About Me - Dipendra Yadav</title>
-        <meta name="description" content="Learn more about Dipendra Yadav - Software Developer with expertise in React, Node.js, and modern web technologies." />
-        <meta name="keywords" content="about, Dipendra Yadav, software developer, skills, experience" />
-        <meta property="og:title" content="About Me - Dipendra Yadav" />
-        <meta property="og:description" content="Software Developer with expertise in React, Node.js, and modern web technologies." />
-        <meta property="og:type" content="website" />
+        <title>About Me - Dipendra Yadav | Software Developer</title>
+        <meta name="description" content="Learn more about Dipendra Yadav - Software Developer with expertise in React, Node.js, and modern web technologies. Explore my skills, experience, achievements, and journey." />
+        <meta name="keywords" content="about, Dipendra Yadav, software developer, React developer, Node.js developer, skills, experience, achievements, full stack developer" />
+        <meta name="author" content="Dipendra Yadav" />
+        <link rel="canonical" href="https://www.dipendrakumaryadav.com.np/aboutme" />
+        
+        {/* Open Graph / Facebook */}
+        <meta property="og:type" content="profile" />
+        <meta property="og:url" content="https://www.dipendrakumaryadav.com.np/aboutme" />
+        <meta property="og:title" content="About Me - Dipendra Yadav | Software Developer" />
+        <meta property="og:description" content="Software Developer with expertise in React, Node.js, and modern web technologies. Explore my skills, experience, and achievements." />
+        <meta property="og:image" content={about?.hero_image ? getImageUrl(about.hero_image) : "https://www.dipendrakumaryadav.com.np/og-image.jpg"} />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:locale" content="en_US" />
+        <meta property="profile:first_name" content="Dipendra" />
+        <meta property="profile:last_name" content="Yadav" />
+        <meta property="profile:username" content="Dipendra Yadav" />
+        
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content="https://www.dipendrakumaryadav.com.np/aboutme" />
+        <meta name="twitter:title" content="About Me - Dipendra Yadav | Software Developer" />
+        <meta name="twitter:description" content="Software Developer with expertise in React, Node.js, and modern web technologies." />
+        <meta name="twitter:image" content={about?.hero_image ? getImageUrl(about.hero_image) : "https://www.dipendrakumaryadav.com.np/og-image.jpg"} />
+        
+        {/* Additional SEO */}
+        <meta name="robots" content="index, follow" />
+        <meta name="googlebot" content="index, follow" />
+        
+        {/* Structured Data */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "ProfilePage",
+            "name": "About Me - Dipendra Yadav",
+            "description": "Learn more about Dipendra Yadav - Software Developer with expertise in React, Node.js, and modern web technologies.",
+            "url": "https://www.dipendrakumaryadav.com.np/aboutme",
+            "mainEntity": {
+              "@type": "Person",
+              "name": "Dipendra Yadav",
+              "jobTitle": "Software Developer",
+              "url": "https://www.dipendrakumaryadav.com.np"
+            }
+          })}
+        </script>
       </Helmet>
       <HeroSection id="top">
         <Title>About <GradientText>Me</GradientText></Title>
