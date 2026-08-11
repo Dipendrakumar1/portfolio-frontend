@@ -1,6 +1,6 @@
 {
   "rewrites": [
-    { "source": "/sitemap.xml", "destination": "https://portfolio-backend-1-esf0.onrender.com/api/sitemap.xml" },
+    { "source": "/sitemap.xml", "destination": "https:///portfolio-backend-mu-beige.vercel.app/api/sitemap.xml" },
     { "source": "/aboutme", "destination": "/index.html" },
     { "source": "/blog", "destination": "/index.html" },
     { "source": "/blog/:slug", "destination": "/index.html" },
