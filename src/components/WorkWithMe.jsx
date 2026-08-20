@@ -435,7 +435,7 @@ const StepCard = styled(GlassCard)`
 
 export default function WorkWithMe() {
   const [contactInfo, setContactInfo] = useState({
-    whatsapp: "+917742228345",
+    whatsapp: "+917970795091",
     email: "dipendrayadav299@gmail.com",
     resume: ""
   });
@@ -571,7 +571,7 @@ export default function WorkWithMe() {
           {contactInfo.resume && (
             <DirectContactCard 
               as="a" 
-              href={`${API_BASE_URL.replace("/api", "")}/api/download-resume`}
+              href={`${API_BASE_URL.replace(/\/api\/?$/, '')}/api/download-resume`}
               target="_blank" 
               rel="noopener noreferrer"
               style={{ background: 'linear-gradient(150deg, rgba(30, 41, 73, 0.8) 0%, rgba(13, 20, 37, 0.95) 100%)', borderColor: 'rgba(56, 189, 248, 0.3)' }}

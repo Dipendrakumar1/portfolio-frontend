@@ -341,7 +341,7 @@ export default function Home() {
             <RoleSubtitle>
               <span>Full Stack Developer</span>
               <span className="divider-dot">•</span>
-              <span>Python & React Specialist</span>
+              <span>Python, AI & Backend</span>
               <span className="divider-dot">•</span>
               <span>Open Source Creator</span>
             </RoleSubtitle>

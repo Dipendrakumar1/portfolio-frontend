@@ -558,7 +558,7 @@ export default function AboutMore() {
                   )}
                   {about?.resume && (
                     <ResumeButton 
-                      href={`${API_BASE_URL.replace("/api", "")}/api/download-resume`}
+                      href={`${API_BASE_URL.replace(/\/api\/?$/, '')}/api/download-resume`}
                       target="_blank"
                       rel="noopener noreferrer"
                     >
