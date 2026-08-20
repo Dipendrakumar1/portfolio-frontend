@@ -3,65 +3,105 @@ import { Helmet } from 'react-helmet-async'
 import { useParams, Link } from "react-router-dom";
 import { API_BASE_URL, getImageUrl } from "../api";
 import styled from "styled-components";
-import { theme, SiteContainer, GradientText, GlassCard } from "../styles/GlobalStyles";
+import { theme, SiteContainer, GlassCard } from "../styles/GlobalStyles";
+import ReactMarkdown from "react-markdown";
+import rehypeRaw from "rehype-raw";
+import MarkdownContent from "./MarkdownContent";
+import Footer from '../components/Footer';
+
+const ProgressBar = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: ${theme.accentGradient};
+  z-index: 9999;
+  transition: width 0.1s ease;
+  box-shadow: 0 0 10px ${theme.accent};
+`
 
 const ArticleHeader = styled.header`
-  margin-bottom: 40px;
+  margin-bottom: 30px;
   text-align: center;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+
+  @media (max-width: 480px) {
+    margin-bottom: 20px;
+  }
 `;
 
 const Title = styled.h1`
-  font-size: clamp(32px, 5vw, 48px);
+  font-size: clamp(24px, 6.5vw, 48px);
   margin-bottom: 16px;
-  color: ${theme.text};
-  line-height: 1.2;
+  color: #fff;
+  line-height: 1.25;
+  font-weight: 800;
+  letter-spacing: -0.02em;
 `;
 
 const Meta = styled.div`
-  font-size: 15px;
+  font-size: 14px;
   color: ${theme.textMuted};
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 10px;
   flex-wrap: wrap;
   
-  span {
-    display: flex;
-    align-items: center;
-    gap: 6px;
+  span.badge {
+    padding: 4px 12px;
+    border-radius: ${theme.radii.pill};
+    background: rgba(56, 189, 248, 0.1);
+    color: ${theme.accent};
+    border: 1px solid rgba(56, 189, 248, 0.25);
+    font-weight: 600;
+    font-size: 12.5px;
   }
 `;
 
 const HeroImageWrapper = styled.div`
   width: 100%;
-  max-width: 1500px;
+  max-width: 1200px;
   margin: 0 auto 40px;
-  border-radius: 16px;
+  border-radius: ${theme.radii.lg};
   overflow: hidden;
-  box-shadow: ${theme.shadows.glass};
+  box-shadow: ${theme.shadows.lift};
   border: 1px solid ${theme.border};
+  background: #080d1a;
   
   img {
     width: 100%;
     height: auto;
     display: block;
-    max-height: 590px;
+    max-height: 500px;
     object-fit: cover;
+  }
+
+  @media (max-width: 480px) {
+    border-radius: 12px;
+    margin-bottom: 24px;
+    img {
+      max-height: 220px;
+    }
   }
 `;
 
 const ContentCard = styled(GlassCard)`
-  max-width: 1700px;
+  max-width: 1100px;
   margin: 0 auto;
-  padding: 56px 48px;
+  padding: 50px 60px;
+  background: linear-gradient(150deg, rgba(20, 29, 49, 0.85) 0%, rgba(11, 17, 33, 0.95) 100%);
+  border: 1px solid ${theme.border};
 
   @media (max-width: ${theme.breakpoints.tablet}) {
-    padding: 32px 20px;
+    padding: 28px 18px;
   }
 
   @media (max-width: 480px) {
-    padding: 20px 12px;
+    padding: 20px 14px;
+    border-radius: 14px;
   }
 `;
 
@@ -79,27 +119,29 @@ const BackLink = styled(Link)`
   align-items: center;
   gap: 8px;
   color: ${theme.textMuted};
-  margin-bottom: 32px;
-  font-weight: 500;
+  margin-bottom: 36px;
+  font-weight: 600;
+  font-size: 14.5px;
+  padding: 8px 18px;
+  border-radius: ${theme.radii.pill};
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid ${theme.border};
+  transition: all 0.25s ease;
   
-  &:before {
-    content: '←';
+  svg {
     transition: transform 0.2s ease;
   }
   
   &:hover {
-    color: ${theme.accent};
+    color: #fff;
+    background: rgba(56, 189, 248, 0.12);
+    border-color: ${theme.accent};
     
-    &:before {
+    svg {
       transform: translateX(-4px);
     }
   }
 `;
-
-import ReactMarkdown from "react-markdown";
-import rehypeRaw from "rehype-raw";
-import MarkdownContent from "./MarkdownContent";
-import Footer from '../components/Footer';
 
 const LikeSection = styled.div`
   margin-top: 60px;
@@ -107,37 +149,37 @@ const LikeSection = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 16px;
-  padding: 32px;
+  padding: 40px 20px 20px;
   border-top: 1px solid ${theme.border};
 `;
 
 const LikeButton = styled.button`
-  background: ${props => props.$liked ? 'rgba(244, 63, 94, 0.15)' : 'rgba(255, 255, 255, 0.05)'};
+  background: ${props => props.$liked ? 'rgba(244, 63, 94, 0.18)' : 'rgba(255, 255, 255, 0.05)'};
   border: 1px solid ${props => props.$liked ? '#f43f5e' : theme.border};
   color: ${props => props.$liked ? '#f43f5e' : theme.text};
-  padding: 12px 24px;
-  border-radius: 50px;
+  padding: 14px 32px;
+  border-radius: ${theme.radii.pill};
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: 18px;
-  font-weight: 600;
-  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  gap: 12px;
+  font-size: 17px;
+  font-weight: 700;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: ${props => props.$liked ? '0 0 25px rgba(244, 63, 94, 0.3)' : 'none'};
   
   &:hover {
-    transform: translateY(-3px);
-    background: ${props => props.$liked ? 'rgba(244, 63, 94, 0.2)' : 'rgba(255, 255, 255, 0.1)'};
-    box-shadow: ${theme.shadows.glass};
+    transform: translateY(-3px) scale(1.03);
+    background: ${props => props.$liked ? 'rgba(244, 63, 94, 0.25)' : 'rgba(255, 255, 255, 0.1)'};
   }
 
   &:active {
-    transform: scale(0.95);
+    transform: scale(0.96);
   }
 
   svg {
-    width: 24px;
-    height: 24px;
+    width: 22px;
+    height: 22px;
     fill: ${props => props.$liked ? '#f43f5e' : 'none'};
     stroke: ${props => props.$liked ? '#f43f5e' : 'currentColor'};
     transition: all 0.3s ease;
@@ -148,24 +190,19 @@ export default function BlogDetail() {
   const { slug } = useParams();
   const [blog, setBlog] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [liked, setLiked] = useState(false);
-  const [sessionId, setSessionId] = useState(null);
-
-  useEffect(() => {
-    // Generate or get session ID
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const [likedBlogs, setLikedBlogs] = useState(() => JSON.parse(localStorage.getItem("liked_blogs") || "[]"));
+  const [sessionId] = useState(() => {
     let sId = localStorage.getItem("visitor_session_id");
     if (!sId) {
       sId = Math.random().toString(36).substring(2) + Date.now().toString(36);
       localStorage.setItem("visitor_session_id", sId);
     }
-    setSessionId(sId);
+    return sId;
+  });
+  const liked = likedBlogs.includes(slug);
 
-    // Check if liked from localStorage
-    const likedBlogs = JSON.parse(localStorage.getItem("liked_blogs") || "[]");
-    if (likedBlogs.includes(slug)) {
-      setLiked(true);
-    }
-
+  useEffect(() => {
     window.scrollTo(0, 0);
     fetch(`${API_BASE_URL}/blogs/${slug}`)
       .then(res => res.json())
@@ -179,6 +216,18 @@ export default function BlogDetail() {
       });
   }, [slug]);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
+      if (totalHeight > 0) {
+        const progress = (window.scrollY / totalHeight) * 100;
+        setScrollProgress(progress);
+      }
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   const handleLike = () => {
     if (liked) return;
 
@@ -190,9 +239,11 @@ export default function BlogDetail() {
       .then(res => res.json())
       .then(data => {
         setBlog(prev => ({ ...prev, likes: data.likes }));
-        setLiked(true);
-        const likedBlogs = JSON.parse(localStorage.getItem("liked_blogs") || "[]");
-        localStorage.setItem("liked_blogs", JSON.stringify([...likedBlogs, slug]));
+        setLikedBlogs(prev => {
+          const next = [...prev, slug];
+          localStorage.setItem("liked_blogs", JSON.stringify(next));
+          return next;
+        });
       })
       .catch(err => console.error("Error liking blog:", err));
   };
@@ -215,75 +266,30 @@ export default function BlogDetail() {
 
   return (
     <>
+      <ProgressBar style={{ width: `${scrollProgress}%` }} />
+
       <Helmet>
         <title>{blog.title} - Tech Musings | Dipendra Yadav</title>
-        <meta name="description" content={blog.subtitle || blog.content?.replace(/[#*`_\[\]\(\)]/g, '').substring(0, 160) || "Blog post"} />
-        <meta name="keywords" content={`${blog.title}, blog, tech musings, Dipendra Yadav, software engineering, web development`} />
+        <meta name="description" content={blog.subtitle || blog.content?.replace(/\*|#|`|_|\[|\]|\(|\)/g, '').substring(0, 160) || "Blog post"} />
         <meta name="author" content={blog.author || "Dipendra Yadav"} />
-        <meta name="published_date" content={blog.published_at} />
-        <meta name="read_time" content={`${blog.read_time_min} min read`} />
         <link rel="canonical" href={`https://www.dipendrakumaryadav.com.np/blog/${blog.slug}`} />
-        
-        {/* Open Graph / Facebook */}
-        <meta property="og:type" content="article" />
-        <meta property="og:url" content={`https://www.dipendrakumaryadav.com.np/blog/${blog.slug}`} />
-        <meta property="og:title" content={blog.title} />
-        <meta property="og:description" content={blog.subtitle || blog.content?.replace(/[#*`_\[\]\(\)]/g, '').substring(0, 160) || "Blog post"} />
-        <meta property="og:image" content={blog.hero_image ? getImageUrl(blog.hero_image) : "https://www.dipendrakumaryadav.com.np/blog-og.jpg"} />
-        <meta property="og:image:width" content="1200" />
-        <meta property="og:image:height" content="630" />
-        <meta property="og:locale" content="en_US" />
-        <meta property="article:published_time" content={blog.published_at} />
-        <meta property="article:author" content={blog.author || "Dipendra Yadav"} />
-        
-        {/* Twitter */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:url" content={`https://www.dipendrakumaryadav.com.np/blog/${blog.slug}`} />
-        <meta name="twitter:title" content={blog.title} />
-        <meta name="twitter:description" content={blog.subtitle || blog.content?.replace(/[#*`_\[\]\(\)]/g, '').substring(0, 160) || "Blog post"} />
-        <meta name="twitter:image" content={blog.hero_image ? getImageUrl(blog.hero_image) : "https://www.dipendrakumaryadav.com.np/blog-og.jpg"} />
-        
-        {/* Additional SEO */}
-        <meta name="robots" content="index, follow" />
-        <meta name="googlebot" content="index, follow" />
-        
-        {/* Structured Data for Article */}
-        <script type="application/ld+json">
-          {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "Article",
-            "headline": blog.title,
-            "description": blog.subtitle || blog.content?.replace(/[#*`_\[\]\(\)]/g, '').substring(0, 160),
-            "image": blog.hero_image ? getImageUrl(blog.hero_image) : "https://www.dipendrakumaryadav.com.np/blog-og.jpg",
-            "mainEntityOfPage": {
-              "@type": "WebPage",
-              "@id": `https://www.dipendrakumaryadav.com.np/blog/${blog.slug}`
-            },
-            "url": `https://www.dipendrakumaryadav.com.np/blog/${blog.slug}`,
-            "datePublished": blog.published_at,
-            "author": {
-              "@type": "Person",
-              "name": blog.author || "Dipendra Yadav"
-            },
-            "publisher": {
-              "@type": "Person",
-              "name": "Dipendra Yadav",
-              "url": "https://www.dipendrakumaryadav.com.np"
-            },
-            "keywords": `${blog.title}, blog, tech musings, Dipendra Yadav, software engineering, web development`
-          })}
-        </script>
       </Helmet>
+
       <SiteContainer>
-        <BackLink to="/blog">Back to all articles</BackLink>
+        <BackLink to="/blog">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          Back to all articles
+        </BackLink>
 
         <ArticleHeader>
           <Title>{blog.title}</Title>
           <Meta>
-            <span>{blog.published_at}</span>
-            <span>·</span>
-            <span>{blog.author}</span>
-            <span>·</span>
+            <span className="badge">{blog.published_at}</span>
+            <span>By <strong>{blog.author}</strong></span>
+            <span>•</span>
             <span>{blog.read_time_min} min read</span>
           </Meta>
         </ArticleHeader>
@@ -304,16 +310,16 @@ export default function BlogDetail() {
               <svg viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l8.84-8.84 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
               </svg>
-              {liked ? 'Liked' : 'Like this post'}
+              {liked ? 'Article Liked' : 'Enjoyed this? Leave a Like'}
             </LikeButton>
             <p style={{ color: theme.textMuted, fontSize: '14px' }}>
-              {blog.likes || 0} people liked this article
+              {blog.likes || 0} {blog.likes === 1 ? 'person' : 'people'} found this helpful
             </p>
           </LikeSection>
         </ContentCard>
       </SiteContainer>
 
-      <Footer linkText="Read more articles →" linkTo="/blog" />
+      <Footer linkText="Explore more articles →" linkTo="/blog" />
     </>
   );
 }

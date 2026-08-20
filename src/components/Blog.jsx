@@ -1,49 +1,161 @@
 import React, { useEffect, useState } from "react";
 import { Helmet } from 'react-helmet-async'
+import { Link } from 'react-router-dom'
 import { API_BASE_URL, getImageUrl } from "../api";
 import styled from "styled-components";
 import { theme, SiteContainer, GradientText, GlassCard, FadeInUp, StaggerContainer } from "../styles/GlobalStyles";
 import Footer from '../components/Footer';
 
 const HeroSection = styled.section`
-  padding: 80px 20px 60px;
+  padding: 50px 16px 24px;
   text-align: center;
 
-  @media (max-width: ${theme.breakpoints.tablet}) {
-    padding: 60px 16px 40px;
+  @media (max-width: 480px) {
+    padding: 30px 8px 16px;
   }
 `
 
 const Title = styled.h1`
-  font-size: clamp(36px, 6vw, 56px);
-  margin-bottom: 24px;
+  font-size: clamp(32px, 7.5vw, 56px);
+  margin-bottom: 14px;
+  font-weight: 900;
+  letter-spacing: -0.03em;
 `
 
 const Subtitle = styled.p`
-  font-size: 18px;
+  font-size: clamp(15px, 3.8vw, 18.5px);
   color: ${theme.textMuted};
-  max-width: 600px;
+  max-width: 650px;
   margin: 0 auto;
+  line-height: 1.7;
 `
 
 const BlogGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-  gap: 36px;
-  margin: 60px auto 0;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 28px;
+  margin: 40px auto 0;
   max-width: 1400px;
   width: 100%;
-  padding: 0 48px;
-  justify-items: center;
+  padding: 0 10px;
 
   @media (max-width: ${theme.breakpoints.tablet}) {
-    padding: 0 20px;
-    gap: 24px;
+    grid-template-columns: 1fr;
+    padding: 0;
+    gap: 20px;
+  }
+`
+
+const BlogCard = styled(GlassCard)`
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  overflow: hidden;
+  text-decoration: none;
+  border-radius: ${theme.radii.lg};
+  border: 1px solid ${theme.border};
+  background: linear-gradient(160deg, rgba(23, 32, 54, 0.75) 0%, rgba(13, 20, 37, 0.85) 100%);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+
+  &:hover {
+    transform: translateY(-8px);
+    border-color: ${theme.borderGlow};
+    box-shadow: ${theme.shadows.lift}, 0 0 25px rgba(56, 189, 248, 0.2);
   }
 
   @media (max-width: 480px) {
-    padding: 0 8px;
-    gap: 16px;
+    border-radius: 14px;
+  }
+`
+
+const BlogImageWrapper = styled.div`
+  width: 100%;
+  height: 220px;
+  overflow: hidden;
+  position: relative;
+  background: #080d1a;
+  
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  
+  ${BlogCard}:hover & img {
+    transform: scale(1.08);
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 50%, rgba(10, 15, 29, 0.8) 100%);
+  }
+
+  @media (max-width: 480px) {
+    height: 190px;
+  }
+`
+
+const BlogContent = styled.div`
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+
+  @media (max-width: 480px) {
+    padding: 18px 16px;
+  }
+`
+
+const BlogTitle = styled.h3`
+  font-size: clamp(18px, 5vw, 22px);
+  font-weight: 700;
+  margin: 0 0 10px 0;
+  color: ${theme.text};
+  line-height: 1.4;
+  transition: color 0.25s ease;
+
+  ${BlogCard}:hover & {
+    color: ${theme.accent};
+  }
+`
+
+const BlogMeta = styled.div`
+  font-size: 13px;
+  color: ${theme.accentHover};
+  font-weight: 500;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`
+
+const BlogTeaser = styled.p`
+  font-size: 15px;
+  color: ${theme.textMuted};
+  line-height: 1.7;
+  margin-bottom: 24px;
+  flex-grow: 1;
+`
+
+const ReadMore = styled.div`
+  font-size: 14px;
+  font-weight: 700;
+  color: ${theme.accent};
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  
+  svg {
+    width: 16px;
+    height: 16px;
+    transition: transform 0.3s ease;
+  }
+  
+  ${BlogCard}:hover & svg {
+    transform: translateX(5px);
   }
 `
 
@@ -51,26 +163,21 @@ const Pagination = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   margin-top: 60px;
   padding: 20px 0;
-
-  @media (max-width: ${theme.breakpoints.mobile}) {
-    gap: 8px;
-    margin-top: 40px;
-  }
 `
 
 const PageButton = styled.button`
   min-width: 44px;
   height: 44px;
   padding: 0 16px;
-  border: 1px solid ${theme.border};
-  background: ${theme.bgCard};
-  color: ${theme.text};
-  border-radius: 8px;
-  font-size: 15px;
-  font-weight: 500;
+  border: 1px solid ${({ $active }) => $active ? theme.accent : theme.border};
+  background: ${({ $active }) => $active ? theme.accentGradient : 'rgba(255, 255, 255, 0.03)'};
+  color: ${({ $active }) => $active ? '#fff' : theme.text};
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
   font-family: ${theme.fontBody};
@@ -83,100 +190,15 @@ const PageButton = styled.button`
   }
 
   &:disabled {
-    opacity: 0.4;
+    opacity: 0.35;
     cursor: not-allowed;
-  }
-
-  &.active {
-    background: ${theme.accent};
-    color: white;
-    border-color: ${theme.accent};
-  }
-
-  @media (max-width: ${theme.breakpoints.mobile}) {
-    min-width: 40px;
-    height: 40px;
-    padding: 0 12px;
-    font-size: 14px;
   }
 `
 
 const PageInfo = styled.span`
   color: ${theme.textMuted};
   font-size: 14px;
-  padding: 0 12px;
-`
-
-const BlogCard = styled(GlassCard)`
-  display: flex;
-  flex-direction: column;
-  padding: 0;
-  overflow: hidden;
-  text-decoration: none;
-`
-
-const BlogImageWrapper = styled.div`
-  width: 100%;
-  height: 220px;
-  overflow: hidden;
-  
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.5s ease;
-  }
-  
-  ${BlogCard}:hover & img {
-    transform: scale(1.05);
-  }
-`
-
-const BlogContent = styled.div`
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-`
-
-const BlogTitle = styled.h3`
-  font-size: 22px;
-  margin: 0 0 12px 0;
-  color: ${theme.text};
-  line-height: 1.4;
-`
-
-const BlogMeta = styled.div`
-  font-size: 14px;
-  color: ${theme.textMuted};
-  margin-bottom: 16px;
-  font-family: ${theme.fontBody};
-`
-
-const BlogTeaser = styled.p`
-  font-size: 15px;
-  color: ${theme.textMuted};
-  line-height: 1.6;
-  margin-bottom: 24px;
-  flex-grow: 1;
-`
-
-const ReadMore = styled.div`
-  font-size: 14px;
-  font-weight: 600;
-  color: ${theme.accent};
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  
-  &:after {
-    content: '→';
-    transition: transform 0.3s ease;
-  }
-  
-  ${BlogCard}:hover &:after {
-    transform: translateX(4px);
-  }
+  padding: 0 8px;
 `
 
 export default function Blog() {
@@ -186,20 +208,17 @@ export default function Blog() {
   const itemsPerPage = 6;
 
   useEffect(() => {
-    // Fetch blogs
     fetch(`${API_BASE_URL}/blogs`)
       .then((res) => res.json())
       .then((data) => setBlogs(data))
       .catch((err) => console.error("Error fetching blogs:", err));
 
-    // Fetch page meta
     fetch(`${API_BASE_URL}/blogs/meta`)
       .then((res) => res.json())
       .then((data) => setPageMeta(data))
       .catch((err) => console.error("Error fetching blogs meta:", err));
   }, []);
 
-  // Pagination logic
   const totalPages = Math.ceil(blogs.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
@@ -222,7 +241,6 @@ export default function Blog() {
     }
   };
 
-  // Generate page numbers to display
   const getPageNumbers = () => {
     const pages = [];
     const maxVisible = 5;
@@ -255,50 +273,17 @@ export default function Blog() {
   return (
     <>
       <Helmet>
-        <title>{pageMeta.title || 'Tech Musings - Blog'}</title>
-        <meta name="description" content={pageMeta.description || "Thoughts on software engineering, web development, and my professional journey."} />
-        <meta name="keywords" content="blog, tech musings, software engineering, web development, Dipendra Yadav, programming, technology blog" />
+        <title>{pageMeta.title || 'Tech Musings & Engineering Blog | Dipendra Yadav'}</title>
+        <meta name="description" content={pageMeta.description || "Thoughts on software engineering, web architectures, and full stack systems."} />
+        <meta name="keywords" content="blog, tech musings, software engineering, web development, Dipendra Yadav, programming" />
         <meta name="author" content="Dipendra Yadav" />
         <link rel="canonical" href="https://www.dipendrakumaryadav.com.np/blog" />
-        
-        {/* Open Graph / Facebook */}
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://www.dipendrakumaryadav.com.np/blog" />
-        <meta property="og:title" content={pageMeta.title || 'Tech Musings - Blog'} />
-        <meta property="og:description" content={pageMeta.description || "Thoughts on software engineering, web development, and my professional journey."} />
-        <meta property="og:image" content="https://www.dipendrakumaryadav.com.np/blog-og.jpg" />
-        <meta property="og:locale" content="en_US" />
-        
-        {/* Twitter */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:url" content="https://www.dipendrakumaryadav.com.np/blog" />
-        <meta name="twitter:title" content={pageMeta.title || 'Tech Musings - Blog'} />
-        <meta name="twitter:description" content={pageMeta.description || "Thoughts on software engineering, web development, and my professional journey."} />
-        <meta name="twitter:image" content="https://www.dipendrakumaryadav.com.np/blog-og.jpg" />
-        
-        {/* Additional SEO */}
-        <meta name="robots" content="index, follow" />
-        <meta name="googlebot" content="index, follow" />
-        
-        {/* Structured Data */}
-        <script type="application/ld+json">
-          {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "Blog",
-            "name": "Tech Musings",
-            "description": pageMeta.description || "Thoughts on software engineering, web development, and my professional journey.",
-            "url": "https://www.dipendrakumaryadav.com.np/blog",
-            "author": {
-              "@type": "Person",
-              "name": "Dipendra Yadav"
-            }
-          })}
-        </script>
       </Helmet>
+
       <FadeInUp>
         <HeroSection>
           <Title>Tech <GradientText>Musings</GradientText></Title>
-          <Subtitle>{pageMeta.description || "Thoughts on software engineering, web development, and my professional journey."}</Subtitle>
+          <Subtitle>{pageMeta.description || "Articles on modern web architecture, Python engineering, and software craft."}</Subtitle>
         </HeroSection>
       </FadeInUp>
 
@@ -307,27 +292,35 @@ export default function Blog() {
           <BlogGrid>
             {currentBlogs.length > 0 ? (
               currentBlogs.map((b) => (
-                <BlogCard as="a" href={`/blog/${b.slug}`} key={b.id}>
+                <BlogCard as={Link} to={`/blog/${b.slug}`} key={b.id}>
                   {b.hero_image && (
                     <BlogImageWrapper>
                       <img src={getImageUrl(b.hero_image)} alt={b.title} loading="lazy" />
                     </BlogImageWrapper>
                   )}
                   <BlogContent>
-                    <BlogTitle>{b.title}</BlogTitle>
                     <BlogMeta>
-                      {b.published_at} · {b.read_time_min} min read
+                      <span>{b.published_at}</span>
+                      <span>•</span>
+                      <span>{b.read_time_min} min read</span>
                     </BlogMeta>
+                    <BlogTitle>{b.title}</BlogTitle>
                     <BlogTeaser>
-                      {b.subtitle || (b.content ? b.content.replace(/[#*`_\[\]\(\)]/g, '').substring(0, 150) + "..." : "")}
+                      {b.subtitle || (b.content ? b.content.replace(/\*|#|`|_|\[|\]|\(|\)/g, '').substring(0, 140) + "..." : "")}
                     </BlogTeaser>
-                    <ReadMore>Read Article</ReadMore>
+                    <ReadMore>
+                      <span>Read Article</span>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <polyline points="12 5 19 12 12 19"></polyline>
+                      </svg>
+                    </ReadMore>
                   </BlogContent>
                 </BlogCard>
               ))
             ) : (
-              <div style={{ color: theme.textMuted, width: '100%', gridColumn: '1 / -1', textAlign: 'center', padding: '40px' }}>
-                No blogs found.
+              <div style={{ color: theme.textMuted, width: '100%', gridColumn: '1 / -1', textAlign: 'center', padding: '60px 20px' }}>
+                No articles published yet.
               </div>
             )}
           </BlogGrid>
@@ -340,7 +333,7 @@ export default function Blog() {
               disabled={currentPage === 1}
               aria-label="Previous page"
             >
-              ← Previous
+              ← Prev
             </PageButton>
 
             {getPageNumbers().map((page, index) => (
@@ -350,7 +343,7 @@ export default function Blog() {
                 <PageButton
                   key={page}
                   onClick={() => handlePageChange(page)}
-                  className={currentPage === page ? 'active' : ''}
+                  $active={currentPage === page}
                   aria-label={`Page ${page}`}
                   aria-current={currentPage === page ? 'page' : undefined}
                 >

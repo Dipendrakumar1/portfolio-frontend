@@ -2,41 +2,46 @@ import React, { useEffect, useState } from "react";
 import { Helmet } from 'react-helmet-async'
 import { API_BASE_URL, getImageUrl } from "../api";
 import styled from "styled-components";
-import { Link } from "react-router-dom";
-import { theme, SiteContainer, GlassCard, GradientText } from "../styles/GlobalStyles";
+import { theme, SiteContainer, GlassCard, GradientText, FadeInUp } from "../styles/GlobalStyles";
 import Footer from '../components/Footer';
+import ReactMarkdown from "react-markdown";
+import rehypeRaw from "rehype-raw";
 
 const HeroSection = styled.section`
-  padding: 60px 0 40px;
+  padding: 60px 0 30px;
   text-align: center;
 `
 
 const Title = styled.h1`
-  font-size: clamp(36px, 6vw, 56px);
-  margin-bottom: 24px;
+  font-size: clamp(38px, 6vw, 60px);
+  margin-bottom: 18px;
+  font-weight: 900;
+  letter-spacing: -0.03em;
 `
 
 const Subtitle = styled.p`
-  font-size: 18px;
+  font-size: clamp(16px, 2vw, 19px);
   color: ${theme.textMuted};
-  max-width: 600px;
+  max-width: 650px;
   margin: 0 auto;
+  line-height: 1.7;
 `
 
 const HeroImageWrapper = styled.div`
   width: 100%;
-  max-width: 1500px;
-  margin: 40px auto 60px;
-  border-radius: 16px;
+  max-width: 1300px;
+  margin: 36px auto 50px;
+  border-radius: ${theme.radii.lg};
   overflow: hidden;
-  box-shadow: ${theme.shadows.glass};
+  box-shadow: ${theme.shadows.lift};
   border: 1px solid ${theme.border};
+  background: #080d1a;
   
   img {
     width: 100%;
     height: auto;
     display: block;
-    max-height: 590px;
+    max-height: 480px;
     object-fit: cover;
   }
 `;
@@ -46,155 +51,269 @@ const ContentGrid = styled.div`
   grid-template-columns: 280px 1fr;
   gap: 48px;
   align-items: start;
-  max-width: 1400px;
+  max-width: 1300px;
   margin: 0 auto;
   
-  @media (max-width: ${theme.breakpoints.tablet}) {
+  @media (max-width: ${theme.breakpoints.desktop}) {
     grid-template-columns: 1fr;
-    gap: 32px;
+    gap: 36px;
   }
 `;
 
 const TOCWrap = styled(GlassCard)`
   position: sticky;
   top: 100px;
-  padding: 24px;
+  padding: 28px 24px;
+  background: linear-gradient(150deg, rgba(20, 29, 49, 0.85) 0%, rgba(11, 17, 33, 0.95) 100%);
   
-  @media (max-width: ${theme.breakpoints.tablet}) {
+  @media (max-width: ${theme.breakpoints.desktop}) {
     position: relative;
     top: 0;
   }
 `;
 
 const TOCHeading = styled.h3`
-  font-size: 24px;
+  font-size: 18px;
+  font-weight: 700;
   margin-top: 0;
-  margin-bottom: 20px;
-  color: ${theme.text};
+  margin-bottom: 18px;
+  color: #fff;
   border-bottom: 1px solid ${theme.border};
   padding-bottom: 12px;
+  letter-spacing: 0.5px;
 `;
 
 const TOCList = styled.ul`
   list-style: none;
   padding: 0;
   margin: 0;
-  
-  li {
-    margin-bottom: 12px;
-  }
-  
-  ul {
-    list-style: none;
-    padding-left: 24px;
-    margin-top: 8px;
-    border-left: 1px solid ${theme.border};
-  }
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 `;
 
 const TOCLink = styled.a`
-  color: ${theme.text};
+  color: ${theme.textMuted};
   font-weight: 500;
+  font-size: 14px;
   text-decoration: none;
   transition: all 0.2s ease;
-  display: inline-block;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   
   &:hover {
     color: ${theme.accent};
     transform: translateX(4px);
   }
-`;
 
-const TOCSubLink = styled.a`
-  color: ${theme.textMuted};
-  font-size: 14px;
-  text-decoration: none;
-  transition: all 0.2s ease;
-  display: inline-block;
-  
-  &:hover {
-    color: ${theme.accentHover};
-    transform: translateX(4px);
+  &::before {
+    content: '•';
+    color: ${theme.accent};
+    font-size: 16px;
   }
 `;
 
 const MainContent = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 40px;
+  gap: 48px;
 `;
 
 const SectionTitle = styled.h2`
-  font-size: 28px;
-  color: ${theme.text};
-  margin-bottom: 24px;
+  font-size: 26px;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  &::before {
+    content: '';
+    width: 4px;
+    height: 24px;
+    background: ${theme.accentGradient};
+    border-radius: 2px;
+    box-shadow: 0 0 10px ${theme.accent};
+  }
 `;
 
 const ProfileCard = styled(GlassCard)`
   display: flex;
-  gap: 32px;
+  gap: 36px;
+  padding: 40px;
+  align-items: flex-start;
+  background: linear-gradient(150deg, rgba(23, 32, 54, 0.8) 0%, rgba(13, 20, 37, 0.9) 100%);
+  border: 1px solid ${theme.border};
   
   @media (max-width: ${theme.breakpoints.tablet}) {
     flex-direction: column;
     align-items: center;
-    text-align: center;
+    padding: 24px 18px;
+    gap: 20px;
   }
-  
+`;
+
+const ProfileImageFrame = styled.div`
+  position: relative;
+  flex-shrink: 0;
+  width: 200px;
+  height: 200px;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 2px solid ${theme.borderStrong};
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5), 0 0 20px rgba(56, 189, 248, 0.25);
+  background: #080d1a;
+  transition: all 0.35s ease;
+
   img {
-    width: 200px;
-    height: 200px;
-    border-radius: 50%;
+    width: 100%;
+    height: 100%;
     object-fit: cover;
-    border: 4px solid ${theme.border};
+    display: block;
+    border-radius: 14px;
+    transition: transform 0.4s ease;
   }
-  
+
+  &:hover {
+    border-color: ${theme.accent};
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 25px rgba(56, 189, 248, 0.4);
+
+    img {
+      transform: scale(1.04);
+    }
+  }
+
+  @media (max-width: 480px) {
+    width: 150px;
+    height: 150px;
+    border-radius: 12px;
+    img {
+      border-radius: 10px;
+    }
+  }
+`;
+
+const ProfileBio = styled.div`
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
   p {
-    font-size: 16px;
-    line-height: 1.7;
-    flex-grow: 1;
+    font-size: clamp(14.5px, 3.6vw, 16.5px);
+    line-height: 1.8;
+    color: ${theme.textBody};
+    margin: 0;
+  }
+
+  strong {
+    color: #fff;
+  }
+`;
+
+const ResumeButton = styled.a`
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 24px;
+  margin-top: 20px;
+  border-radius: ${theme.radii.pill};
+  background: ${theme.accentGradient};
+  color: #fff !important;
+  font-weight: 700;
+  font-size: 14.5px;
+  text-decoration: none;
+  box-shadow: 0 4px 15px rgba(56, 189, 248, 0.3);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  align-self: flex-start;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(56, 189, 248, 0.5);
+  }
+
+  svg {
+    width: 18px;
+    height: 18px;
   }
 `;
 
 const BlockCard = styled(GlassCard)`
-  padding: 40px 48px;
+  padding: 32px;
+  background: linear-gradient(150deg, rgba(20, 29, 49, 0.8) 0%, rgba(11, 17, 33, 0.9) 100%);
 
   @media (max-width: ${theme.breakpoints.tablet}) {
-    padding: 28px 24px;
-  }
-
-  @media (max-width: 480px) {
-    padding: 24px 20px;
+    padding: 22px 16px;
   }
 `;
 
 const BadgeContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 10px;
 `;
 
-const Badge = styled.div`
-  font-size: 14px;
-  color: ${theme.text};
-  background: rgba(255, 255, 255, 0.05);
+const SkillBadge = styled.div`
+  font-size: 13.5px;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.04);
   border: 1px solid ${theme.border};
-  padding: 6px 12px;
-  border-radius: 20px;
+  padding: 6px 14px;
+  border-radius: ${theme.radii.pill};
   display: flex;
   align-items: center;
   gap: 8px;
+  transition: all 0.25s ease;
   
-  span {
+  &:hover {
+    border-color: ${theme.accent};
+    background: rgba(56, 189, 248, 0.12);
+    transform: translateY(-2px);
+  }
+
+  span.cat {
     color: ${theme.accent};
-    font-weight: 600;
+    font-weight: 700;
+    font-size: 11px;
+    text-transform: uppercase;
+    background: rgba(56, 189, 248, 0.15);
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+
+  span.lvl {
+    color: ${theme.textMuted};
+    font-size: 11.5px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 12.5px;
+    padding: 5px 12px;
   }
 `;
 
-const ExperienceItem = styled.div`
-  margin-bottom: 40px;
-  
-  &:last-child {
-    margin-bottom: 0;
+const ExperienceTimeline = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+`;
+
+const ExpItem = styled.div`
+  padding: 24px;
+  border-radius: ${theme.radii.md};
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid ${theme.border};
+  transition: all 0.3s ease;
+
+  &:hover {
+    border-color: ${theme.borderGlow};
+    background: rgba(56, 189, 248, 0.04);
+  }
+
+  @media (max-width: 480px) {
+    padding: 16px 14px;
   }
 `;
 
@@ -202,131 +321,136 @@ const ExpHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
+  gap: 12px;
   
   @media (max-width: ${theme.breakpoints.mobile}) {
     flex-direction: column;
-    gap: 12px;
+    gap: 8px;
   }
 `;
 
 const ExpCompany = styled.h3`
-  font-size: 22px;
-  color: ${theme.accentHover};
-  margin: 0 0 8px 0;
-`;
-
-const ExpLogoFrame = styled.div`
-  background: rgba(255, 255, 255, 0.05);
-  padding: 8px;
-  border-radius: 8px;
-  border: 1px solid ${theme.border};
-  
-  img {
-    height: 40px;
-    width: auto;
-    display: block;
-    object-fit: contain;
-  }
+  font-size: clamp(18px, 4.8vw, 22px);
+  font-weight: 800;
+  color: ${theme.accent};
+  margin: 0 0 4px 0;
 `;
 
 const ExpMeta = styled.div`
   display: flex;
-  gap: 16px;
-  font-size: 14px;
+  gap: 12px;
+  font-size: 13.5px;
   color: ${theme.textMuted};
-  margin-bottom: 16px;
-  font-family: ${theme.fontBody};
-  
-  @media (max-width: ${theme.breakpoints.mobile}) {
-    flex-direction: column;
-    gap: 4px;
-  }
-`;
-
-const ContributionTitle = styled.h4`
-  font-size: 15px;
-  color: ${theme.text};
   margin-bottom: 12px;
+  flex-wrap: wrap;
+  
+  span strong {
+    color: #fff;
+  }
 `;
 
 const BulletList = styled.ul`
   list-style: none;
   padding-left: 0;
+  margin: 0;
 
   li {
-    margin-bottom: 12px;
-    padding-left: 24px;
+    margin-bottom: 8px;
+    padding-left: 18px;
     position: relative;
-    color: ${theme.textMuted};
+    color: ${theme.textBody};
     line-height: 1.6;
+    font-size: clamp(14px, 3.6vw, 15.5px);
     
     &:before {
-      content: '•';
+      content: '▹';
       color: ${theme.accent};
       position: absolute;
       left: 0;
       top: 0;
-      font-size: 18px;
+      font-size: 15px;
     }
   }
 `;
 
-const NormalList = styled(BulletList)`
+const CertGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 12px;
-  
-  li {
-    margin-bottom: 0;
-  }
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
 `;
 
-const TableWrapper = styled.div`
-  width: 100%;
-  overflow-x: auto;
-`;
+const CertCard = styled.div`
+  padding: 20px;
+  border-radius: ${theme.radii.md};
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid ${theme.border};
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 16px;
+  transition: all 0.3s ease;
 
-const Table = styled.table`
-  width: 100%;
-  border-collapse: collapse;
-  
-  th, td {
-    padding: 16px;
-    text-align: left;
-    border-bottom: 1px solid ${theme.border};
+  &:hover {
+    border-color: ${theme.accent};
+    transform: translateY(-3px);
   }
-  
-  th {
-    color: ${theme.text};
-    font-weight: 600;
-    font-family: ${theme.fontHeading};
+
+  .cert-name {
+    font-weight: 700;
+    font-size: 16px;
+    color: #fff;
   }
-  
-  td {
-    color: ${theme.textMuted};
-  }
-  
+
   a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    font-weight: 600;
     color: ${theme.accent};
-    text-decoration: underline;
-    text-underline-offset: 4px;
-    
-    &:hover {
-      color: ${theme.accentHover};
-    }
   }
 
-  .certificate-img {
-    height: 60px;
+  img {
+    max-height: 80px;
     width: auto;
-    border-radius: 4px;
-    border: 1px solid ${theme.border};
+    object-fit: contain;
+    border-radius: 6px;
   }
 `;
 
-import ReactMarkdown from "react-markdown";
-import rehypeRaw from "rehype-raw";
+const ToolGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 14px;
+`;
+
+const ToolBadge = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid ${theme.border};
+  color: ${theme.text};
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.25s ease;
+
+  &:hover {
+    border-color: ${theme.accent};
+    background: rgba(56, 189, 248, 0.1);
+    transform: translateY(-2px);
+  }
+
+  img {
+    height: 20px;
+    width: 20px;
+    object-fit: contain;
+  }
+`;
 
 export default function AboutMore() {
   const [about, setAbout] = useState(null);
@@ -380,123 +504,128 @@ export default function AboutMore() {
       .catch((err) => console.error("Error fetching achievements:", err));
   }, []);
 
+  const heroImageSrc = about?.hero_image 
+    ? getImageUrl(about.hero_image) 
+    : "https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=1472&auto=format&fit=crop";
+
   return (
     <>
       <Helmet>
-        <title>About Me - Dipendra Yadav | Software Developer</title>
-        <meta name="description" content="Learn more about Dipendra Yadav - Software Developer with expertise in React, Node.js, and modern web technologies. Explore my skills, experience, achievements, and journey." />
-        <meta name="keywords" content="about, Dipendra Yadav, software developer, React developer, Node.js developer, skills, experience, achievements, full stack developer" />
+        <title>About Me - Dipendra Yadav | Software Developer Profile</title>
+        <meta name="description" content="Learn more about Dipendra Yadav - Full stack engineer with expertise in Python, React, Flask, and scalable systems." />
         <meta name="author" content="Dipendra Yadav" />
         <link rel="canonical" href="https://www.dipendrakumaryadav.com.np/aboutme" />
-        
-        {/* Open Graph / Facebook */}
-        <meta property="og:type" content="profile" />
-        <meta property="og:url" content="https://www.dipendrakumaryadav.com.np/aboutme" />
-        <meta property="og:title" content="About Me - Dipendra Yadav | Software Developer" />
-        <meta property="og:description" content="Software Developer with expertise in React, Node.js, and modern web technologies. Explore my skills, experience, and achievements." />
-        <meta property="og:image" content={about?.hero_image ? getImageUrl(about.hero_image) : "https://www.dipendrakumaryadav.com.np/og-image.jpg"} />
-        <meta property="og:image:width" content="1200" />
-        <meta property="og:image:height" content="630" />
-        <meta property="og:locale" content="en_US" />
-        <meta property="profile:first_name" content="Dipendra" />
-        <meta property="profile:last_name" content="Yadav" />
-        <meta property="profile:username" content="Dipendra Yadav" />
-        
-        {/* Twitter */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:url" content="https://www.dipendrakumaryadav.com.np/aboutme" />
-        <meta name="twitter:title" content="About Me - Dipendra Yadav | Software Developer" />
-        <meta name="twitter:description" content="Software Developer with expertise in React, Node.js, and modern web technologies." />
-        <meta name="twitter:image" content={about?.hero_image ? getImageUrl(about.hero_image) : "https://www.dipendrakumaryadav.com.np/og-image.jpg"} />
-        
-        {/* Additional SEO */}
-        <meta name="robots" content="index, follow" />
-        <meta name="googlebot" content="index, follow" />
-        
-        {/* Structured Data */}
-        <script type="application/ld+json">
-          {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "ProfilePage",
-            "name": "About Me - Dipendra Yadav",
-            "description": "Learn more about Dipendra Yadav - Software Developer with expertise in React, Node.js, and modern web technologies.",
-            "url": "https://www.dipendrakumaryadav.com.np/aboutme",
-            "mainEntity": {
-              "@type": "Person",
-              "name": "Dipendra Yadav",
-              "jobTitle": "Software Developer",
-              "url": "https://www.dipendrakumaryadav.com.np"
-            }
-          })}
-        </script>
       </Helmet>
+
       <HeroSection id="top">
         <Title>About <GradientText>Me</GradientText></Title>
-        <Subtitle>I am a software developer with a passion for creating beautiful and functional digital experiences.</Subtitle>
+        <Subtitle>Discover my technical background, core skill set, career trajectory, and achievements.</Subtitle>
       </HeroSection>
 
       <SiteContainer>
-        <HeroImageWrapper>
-          <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=1472&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Hero Banner" />
-        </HeroImageWrapper>
+        <FadeInUp>
+          <HeroImageWrapper>
+            <img src={heroImageSrc} alt="Dipendra workspace banner" />
+          </HeroImageWrapper>
+        </FadeInUp>
 
         <ContentGrid>
-          {/* TABLE OF CONTENTS */}
           <TOCWrap>
-            <TOCHeading>Table of Contents</TOCHeading>
+            <TOCHeading>Quick Navigation</TOCHeading>
             <TOCList>
-              {skills.length > 0 && <li><TOCLink href="#skills">Core Skills & Expertise</TOCLink></li>}
-              {experiences.length > 0 && (
-                <li>
-                  <TOCLink href="#experience">Experience</TOCLink>
-                  <ul>
-                    {experiences.map(exp => (
-                      <li key={exp.id}><TOCSubLink href={`#exp-${exp.id}`}>{exp.company_name}</TOCSubLink></li>
-                    ))}
-                  </ul>
-                </li>
-              )}
-              {interests.length > 0 && <li><TOCLink href="#interests">Interests</TOCLink></li>}
-              {tools.length > 0 && <li><TOCLink href="#tools">Tools and Technologies</TOCLink></li>}
-              {languages.length > 0 && <li><TOCLink href="#languages">Programming Languages</TOCLink></li>}
+              <li><TOCLink href="#about">Bio & Overview</TOCLink></li>
+              {skills.length > 0 && <li><TOCLink href="#skills">Core Skills</TOCLink></li>}
+              {experiences.length > 0 && <li><TOCLink href="#experience">Work Experience</TOCLink></li>}
               {achievements.length > 0 && <li><TOCLink href="#achievements">Achievements</TOCLink></li>}
-              {certs.length > 0 && <li><TOCLink href="#certificates">Certificates and Badges</TOCLink></li>}
+              {tools.length > 0 && <li><TOCLink href="#tools">Tools & Tech</TOCLink></li>}
+              {languages.length > 0 && <li><TOCLink href="#languages">Languages</TOCLink></li>}
+              {certs.length > 0 && <li><TOCLink href="#certificates">Certificates</TOCLink></li>}
             </TOCList>
           </TOCWrap>
 
           <MainContent>
-            {/* ABOUT PROFILE */}
             <section id="about">
               <SectionTitle>Who I Am</SectionTitle>
               <ProfileCard>
-                <img src={getImageUrl(about?.hero_image) || "img/profile.jpg"} alt="Profile" />
-                <div>
+                <ProfileImageFrame>
+                  <img src={getImageUrl(about?.hero_image) || "img/profile.jpg"} alt="Dipendra profile" />
+                </ProfileImageFrame>
+                <ProfileBio>
                   {about?.body ? (
                     <ReactMarkdown rehypePlugins={[rehypeRaw]}>{about.body}</ReactMarkdown>
                   ) : (
-                    <p>Loading bio...</p>
+                    <p>Software developer dedicated to writing maintainable, production-ready code.</p>
                   )}
-                </div>
+                  {about?.resume && (
+                    <ResumeButton 
+                      href={`${API_BASE_URL.replace("/api", "")}/api/download-resume`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                        <polyline points="7 10 12 15 17 10" />
+                        <line x1="12" y1="15" x2="12" y2="3" />
+                      </svg>
+                      <span>Download Resume</span>
+                    </ResumeButton>
+                  )}
+                </ProfileBio>
               </ProfileCard>
             </section>
 
-            {/* SKILLS */}
             {skills.length > 0 && (
               <section id="skills">
                 <SectionTitle>Core Skills & Expertise</SectionTitle>
                 <BlockCard>
                   <BadgeContainer>
                     {skills.map(skill => (
-                      <Badge key={skill.id}>
-                        {skill.category && <span>{skill.category}</span>} {skill.name} {skill.level && `(${skill.level})`}
-                      </Badge>
+                      <SkillBadge key={skill.id}>
+                        {skill.category && <span className="cat">{skill.category}</span>}
+                        <strong>{skill.name}</strong>
+                        {skill.level && <span className="lvl">({skill.level})</span>}
+                      </SkillBadge>
                     ))}
                   </BadgeContainer>
                 </BlockCard>
               </section>
             )}
 
-            {/* ACHIEVEMENTS */}
+            {experiences.length > 0 && (
+              <section id="experience">
+                <SectionTitle>Work Experience</SectionTitle>
+                <BlockCard>
+                  <ExperienceTimeline>
+                    {experiences.map((exp) => (
+                      <ExpItem key={exp.id} id={`exp-${exp.id}`}>
+                        <ExpHeader>
+                          <div>
+                            <ExpCompany>{exp.company_name}</ExpCompany>
+                            <ExpMeta>
+                              <span><strong>Role:</strong> {exp.role}</span>
+                              <span><strong>Tenure:</strong> {exp.tenure}</span>
+                            </ExpMeta>
+                          </div>
+                          {exp.company_logo && (
+                            <img 
+                              src={getImageUrl(exp.company_logo)} 
+                              alt={exp.company_name} 
+                              style={{ height: '36px', objectFit: 'contain' }}
+                            />
+                          )}
+                        </ExpHeader>
+                        <BulletList>
+                          {exp.contributions.map((item, idx) => (
+                            <li key={idx}>{item}</li>
+                          ))}
+                        </BulletList>
+                      </ExpItem>
+                    ))}
+                  </ExperienceTimeline>
+                </BlockCard>
+              </section>
+            )}
+
             {achievements.length > 0 && (
               <section id="achievements">
                 <SectionTitle>Achievements & Recognitions</SectionTitle>
@@ -504,7 +633,7 @@ export default function AboutMore() {
                   <BulletList>
                     {achievements.map(ach => (
                       <li key={ach.id}>
-                        <strong style={{ color: theme.text }}>{ach.title}</strong>
+                        <strong style={{ color: '#fff' }}>{ach.title}</strong>
                         {ach.description && <p style={{ fontSize: "14px", margin: "4px 0 0 0", color: theme.textMuted }}>{ach.description}</p>}
                       </li>
                     ))}
@@ -513,123 +642,64 @@ export default function AboutMore() {
               </section>
             )}
 
-            {/* EXPERIENCE */}
-            <section id="experience">
-              <SectionTitle>Experience</SectionTitle>
-              {experiences.length > 0 ? (
-                experiences.map((exp) => (
-                  <BlockCard id={`exp-${exp.id}`} key={exp.id} style={{ marginBottom: "24px" }}>
-                    <ExpHeader>
-                      <div>
-                        <ExpCompany>{exp.company_name}</ExpCompany>
-                        <ExpMeta>
-                          <span><strong>Role:</strong> {exp.role}</span>
-                          <span><strong>Tenure:</strong> {exp.tenure}</span>
-                        </ExpMeta>
-                      </div>
-                      {exp.company_logo && (
-                        <ExpLogoFrame>
-                          <img src={getImageUrl(exp.company_logo)} alt={exp.company_name} />
-                        </ExpLogoFrame>
-                      )}
-                    </ExpHeader>
-
-                    <ContributionTitle>Key Contributions</ContributionTitle>
-                    <BulletList>
-                      {exp.contributions.map((item, idx) => (
-                        <li key={idx}>{item}</li>
-                      ))}
-                    </BulletList>
-                  </BlockCard>
-                ))
-              ) : (
-                <p>No experience records found.</p>
-              )}
-            </section>
-
-            {/* INTERESTS */}
-            {interests.length > 0 && (
-              <section id="interests">
-                <SectionTitle>Interests</SectionTitle>
+            {tools.length > 0 && (
+              <section id="tools">
+                <SectionTitle>Tools & Technologies</SectionTitle>
                 <BlockCard>
-                  <NormalList>
-                    {interests.map(interest => (
-                      <li key={interest.id}>{interest.name}</li>
+                  <ToolGrid>
+                    {tools.map(tool => (
+                      <ToolBadge key={tool.id}>
+                        {tool.icon_url && <img src={getImageUrl(tool.icon_url)} alt="" />}
+                        <span>{tool.name}</span>
+                      </ToolBadge>
                     ))}
-                  </NormalList>
+                  </ToolGrid>
                 </BlockCard>
               </section>
             )}
 
-            {/* TOOLS */}
-            {tools.length > 0 && (
-              <section id="tools">
-                <SectionTitle>Tools and Technologies</SectionTitle>
+            {languages.length > 0 && (
+              <section id="languages">
+                <SectionTitle>Languages</SectionTitle>
                 <BlockCard>
                   <BadgeContainer>
-                    {tools.map(tool => (
-                      <Badge key={tool.id}>
-                        {tool.icon_url && <img src={getImageUrl(tool.icon_url)} alt="" style={{ height: "16px", objectFit: "contain" }} />}
-                        {tool.name}
-                      </Badge>
+                    {languages.map(lang => (
+                      <SkillBadge key={lang.id}>
+                        <strong>{lang.name}</strong>
+                        {lang.level && <span className="lvl">({lang.level})</span>}
+                      </SkillBadge>
                     ))}
                   </BadgeContainer>
                 </BlockCard>
               </section>
             )}
 
-            {/* LANGUAGES */}
-            {languages.length > 0 && (
-              <section id="languages">
-                <SectionTitle>Programming Languages</SectionTitle>
+            {certs.length > 0 && (
+              <section id="certificates">
+                <SectionTitle>Certificates & Credentials</SectionTitle>
                 <BlockCard>
-                  <NormalList>
-                    {languages.map(lang => (
-                      <li key={lang.id}>{lang.name} {lang.level && <span style={{ opacity: 0.6 }}>({lang.level})</span>}</li>
+                  <CertGrid>
+                    {certs.map((cert) => (
+                      <CertCard key={cert.id}>
+                        <div className="cert-name">{cert.name}</div>
+                        {cert.image_url ? (
+                          <img src={getImageUrl(cert.image_url)} alt={cert.name} />
+                        ) : cert.link_url ? (
+                          <a href={cert.link_url} target="_blank" rel="noopener noreferrer">
+                            <span>View Credential</span>
+                            <span>→</span>
+                          </a>
+                        ) : null}
+                      </CertCard>
                     ))}
-                  </NormalList>
+                  </CertGrid>
                 </BlockCard>
               </section>
             )}
-
-            {/* CERTIFICATES */}
-            <section id="certificates">
-              <SectionTitle>Certificates and Badges</SectionTitle>
-              <BlockCard style={{ padding: 0, overflow: 'hidden' }}>
-                <TableWrapper>
-                  <Table>
-                    <thead>
-                      <tr>
-                        <th>Name</th>
-                        <th>Credentials</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {certs.length > 0 ? (
-                        certs.map((cert) => (
-                          <tr key={cert.id}>
-                            <td>{cert.name}</td>
-                            <td>
-                              {cert.image_url ? (
-                                <img src={getImageUrl(cert.image_url)} className="certificate-img" alt={cert.name} />
-                              ) : (
-                                <a href={cert.link_url} target="_blank" rel="noopener noreferrer">View Certificate →</a>
-                              )}
-                            </td>
-                          </tr>
-                        ))
-                      ) : (
-                        <tr><td colSpan="2" style={{ textAlign: "center", padding: "32px" }}>No certificates found.</td></tr>
-                      )}
-                    </tbody>
-                  </Table>
-                </TableWrapper>
-              </BlockCard>
-            </section>
           </MainContent>
         </ContentGrid>
       </SiteContainer>
-      <Footer linkText="Blog →" linkTo="/blog" />
+      <Footer linkText="Explore My Blogs →" linkTo="/blog" />
     </>
   );
 }
