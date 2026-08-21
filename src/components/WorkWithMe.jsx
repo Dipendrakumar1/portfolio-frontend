@@ -1,9 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Helmet } from 'react-helmet-async'
 import styled from "styled-components";
 import { API_BASE_URL } from "../api";
 import { theme, SiteContainer, GlassCard, GradientText, FadeInUp } from "../styles/GlobalStyles";
 import Footer from "../components/Footer";
+
+const RECAPTCHA_SITE_KEY = (import.meta.env.VITE_RECAPTCHA_SITE_KEY || "").trim();
+const RECAPTCHA_ENABLED = Boolean(RECAPTCHA_SITE_KEY) && !RECAPTCHA_SITE_KEY.toLowerCase().startsWith("your-");
 
 const HeroSection = styled.section`
   padding: 70px 0 40px;
@@ -330,6 +333,14 @@ const StatusMessage = styled.div`
   color: ${({ $type }) => $type === 'success' ? theme.success : '#f43f5e'};
 `
 
+const RecaptchaWrap = styled.div`
+  min-height: 74px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 8px 0;
+`
+
 const InfoSection = styled.section`
   margin-top: 100px;
   padding-bottom: 40px;
@@ -446,19 +457,64 @@ export default function WorkWithMe() {
     subject: "Full Stack Web App",
     message: ""
   });
-
+  const [captchaToken, setCaptchaToken] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [status, setStatus] = useState(null); // { type: 'success' | 'error', message: '' }
+  const recaptchaContainerRef = useRef(null);
+  const recaptchaWidgetRef = useRef(null);
+
+  useEffect(() => {
+    if (!RECAPTCHA_ENABLED || !recaptchaContainerRef.current) return;
+
+    const renderCaptcha = () => {
+      if (!window.grecaptcha || !recaptchaContainerRef.current) return;
+
+      if (recaptchaWidgetRef.current !== null && recaptchaWidgetRef.current !== undefined) {
+        try {
+          window.grecaptcha.reset(recaptchaWidgetRef.current);
+        } catch (error) {
+          console.warn("Unable to reset recaptcha widget:", error);
+        }
+      }
+
+      recaptchaWidgetRef.current = window.grecaptcha.render(recaptchaContainerRef.current, {
+        sitekey: RECAPTCHA_SITE_KEY,
+        callback: (token) => setCaptchaToken(token),
+        'expired-callback': () => setCaptchaToken(""),
+      });
+    };
+
+    if (window.grecaptcha) {
+      renderCaptcha();
+      return;
+    }
+
+    const existingScript = document.getElementById("google-recaptcha-script");
+    if (existingScript) {
+      existingScript.addEventListener("load", renderCaptcha, { once: true });
+      return;
+    }
+
+    const script = document.createElement("script");
+    script.id = "google-recaptcha-script";
+    script.src = "https://www.google.com/recaptcha/api.js?render=explicit";
+    script.async = true;
+    script.defer = true;
+    script.onload = renderCaptcha;
+    document.body.appendChild(script);
+  }, []);
 
   useEffect(() => {
     fetch(`${API_BASE_URL}/about`)
       .then(res => res.json())
       .then(data => {
-        setContactInfo(prev => ({
-          whatsapp: data.whatsapp || prev.whatsapp,
-          email: data.email || prev.email,
-          resume: data.resume || ""
-        }));
+        if (data) {
+          setContactInfo(prev => ({
+            whatsapp: data.whatsapp ? data.whatsapp : prev.whatsapp,
+            email: data.email ? data.email : prev.email,
+            resume: data.resume || ""
+          }));
+        }
       })
       .catch(err => console.error("Error fetching contact info:", err));
   }, []);
@@ -476,55 +532,58 @@ export default function WorkWithMe() {
       return;
     }
 
+    if (RECAPTCHA_ENABLED && !captchaToken) {
+      setStatus({ type: 'error', message: 'Please complete the captcha verification.' });
+      return;
+    }
+
     setIsSubmitting(true);
     setStatus(null);
 
     try {
       const res = await fetch(`${API_BASE_URL}/contact`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData)
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...formData,
+          captchaToken: RECAPTCHA_ENABLED ? captchaToken : ''
+        })
       });
       const result = await res.json();
-
       if (res.ok) {
-        setStatus({ type: 'success', message: result.message || 'Thank you! Your message has been sent successfully.' });
-        setFormData({
-          name: "",
-          email: "",
-          subject: "Full Stack Web App",
-          message: ""
-        });
+        setStatus({ type: 'success', message: 'Message sent successfully! I will get back to you within 24 hours.' });
+        setFormData({ name: '', email: '', subject: 'Full Stack Web App', message: '' });
+        setCaptchaToken("");
+        if (window.grecaptcha && recaptchaWidgetRef.current !== null && recaptchaWidgetRef.current !== undefined) {
+          window.grecaptcha.reset(recaptchaWidgetRef.current);
+        }
       } else {
         setStatus({ type: 'error', message: result.error || 'Failed to send message. Please try again or reach out on WhatsApp.' });
       }
     } catch (err) {
-      console.error("Error sending contact message:", err);
+      console.error("Error submitting contact form:", err);
       setStatus({ type: 'error', message: 'Network error. Please message me directly on WhatsApp or Email.' });
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  const cleanWhatsApp = (contactInfo.whatsapp || "").replace(/\D/g, "");
+  const whatsAppUrl = cleanWhatsApp ? `https://wa.me/${cleanWhatsApp}` : "#";
+
   return (
-    <SiteContainer>
+    <>
       <Helmet>
-        <title>Hire Me & Connect - Let's Build Something Exceptional | Dipendra Yadav</title>
-        <meta name="description" content="Send a message or inquire about freelance software development, full stack web apps, and consulting. Contact Dipendra Yadav today." />
-        <meta name="keywords" content="hire, connect, contact developer, freelance, web developer, React developer, Python developer, Dipendra Yadav" />
-        <meta name="author" content="Dipendra Yadav" />
+        <title>Hire Me & Connect - Full-Stack Developer | Dipendra Yadav</title>
+        <meta name="description" content="Collaborate on modern web applications, scalable APIs, and bespoke software solutions. Let's discuss your project scope, timeline, and deliverables." />
         <link rel="canonical" href="https://www.dipendrakumaryadav.com.np/hire-me" />
       </Helmet>
 
       <FadeInUp>
         <HeroSection>
-          <AvailabilityPill>
-            <span className="dot" />
-            Available for Q3/Q4 Projects & Full-time Roles
-          </AvailabilityPill>
-          <Title>Let's Build Something <GradientText>Extraordinary</GradientText></Title>
+          <Title>Let's <GradientText>Build Together</GradientText></Title>
           <Subtitle>
-            Have a project in mind, an open role, or need expert technical consultation? Send a message below or connect directly.
+            Have an idea for a web platform, business tool, or system architecture? Send a direct message below or reach out via WhatsApp/Email.
           </Subtitle>
         </HeroSection>
       </FadeInUp>
@@ -534,7 +593,7 @@ export default function WorkWithMe() {
         <LeftColumn>
           <DirectContactCard 
             as="a" 
-            href={`https://wa.me/${contactInfo.whatsapp?.replace('+', '')}`} 
+            href={whatsAppUrl} 
             target="_blank" 
             rel="noopener noreferrer"
           >
@@ -545,7 +604,7 @@ export default function WorkWithMe() {
             </IconBox>
             <DirectText>
               <h3>Instant WhatsApp</h3>
-              <p>Fastest response for project scope, rates, and availability.</p>
+              <p>{contactInfo.whatsapp || "Fastest response for project scope and availability."}</p>
             </DirectText>
             <ArrowIcon>→</ArrowIcon>
           </DirectContactCard>
@@ -668,6 +727,15 @@ export default function WorkWithMe() {
               />
             </FormGroup>
 
+            {RECAPTCHA_ENABLED && (
+              <FormGroup>
+                <Label>
+                  <span>Verification</span>
+                </Label>
+                <RecaptchaWrap ref={recaptchaContainerRef} />
+              </FormGroup>
+            )}
+
             {status && (
               <StatusMessage $type={status.type}>
                 <span>{status.type === 'success' ? '✓' : '⚠️'}</span>
@@ -759,6 +827,6 @@ export default function WorkWithMe() {
       </InfoSection>
 
       <Footer linkText="Back to Home →" linkTo="/" />
-    </SiteContainer>
+    </>
   );
 }
