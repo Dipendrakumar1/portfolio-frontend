@@ -67,6 +67,8 @@ const GlobalStyle = createGlobalStyle`
   
   body {
     background:
+      repeating-linear-gradient(90deg, rgba(148, 163, 184, 0.025) 0, rgba(148, 163, 184, 0.025) 1px, transparent 1px, transparent 72px),
+      repeating-linear-gradient(0deg, rgba(148, 163, 184, 0.02) 0, rgba(148, 163, 184, 0.02) 1px, transparent 1px, transparent 72px),
       radial-gradient(1200px 800px at 85% -10%, rgba(56, 189, 248, 0.16), transparent 60%),
       radial-gradient(1000px 700px at -10% 20%, rgba(129, 140, 248, 0.14), transparent 60%),
       radial-gradient(1100px 900px at 50% 115%, rgba(16, 185, 129, 0.1), transparent 60%),
@@ -85,7 +87,7 @@ const GlobalStyle = createGlobalStyle`
     font-weight: 700;
     margin-bottom: 0.85rem;
     color: ${theme.text};
-    letter-spacing: -0.025em;
+    letter-spacing: 0;
     line-height: 1.25;
   }
 
@@ -119,6 +121,15 @@ const GlobalStyle = createGlobalStyle`
     outline: 2px solid ${theme.accent};
     outline-offset: 3px;
     border-radius: 6px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      scroll-behavior: auto !important;
+      transition-duration: 0.01ms !important;
+    }
   }
   
   ::selection { 

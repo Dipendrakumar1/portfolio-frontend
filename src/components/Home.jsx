@@ -6,7 +6,7 @@ import styled from 'styled-components'
 import SectionHeader from '../components/SectionHeader'
 import Card from '../components/Card'
 import Footer from '../components/Footer'
-import { theme, GradientText, SiteContainer, FadeInUp } from '../styles/GlobalStyles'
+import { theme, GradientText, SiteContainer, FadeInUp, GlassCard } from '../styles/GlobalStyles'
 
 const HeroSection = styled.section`
   min-height: 60vh;
@@ -257,6 +257,45 @@ const StatCard = styled.div`
   }
 `
 
+const HighlightsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 14px;
+  max-width: 900px;
+  margin: 24px auto 0;
+`;
+
+const HighlightCard = styled.div`
+  padding: 18px;
+  border: 1px solid ${theme.border};
+  border-radius: ${theme.radii.md};
+  background: rgba(255, 255, 255, 0.03);
+  text-align: center;
+
+  strong { display: block; color: #fff; font-size: 24px; }
+  span { color: ${theme.textMuted}; font-size: 12px; text-transform: uppercase; }
+`;
+
+const TestimonialsSection = styled.section`
+  max-width: 1100px;
+  margin: 72px auto 0;
+`;
+
+const TestimonialsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 18px;
+`;
+
+const TestimonialCard = styled(GlassCard)`
+  padding: 24px;
+  margin: 0;
+
+  blockquote { color: ${theme.textBody}; line-height: 1.7; margin-bottom: 18px; }
+  cite { color: ${theme.textMuted}; font-size: 13px; font-style: normal; }
+  cite strong { color: #fff; }
+`;
+
 const ContentSection = styled.section`
   margin-top: 70px;
 
@@ -283,12 +322,28 @@ const CardsGrid = styled.div`
 
 export default function Home() {
   const [cards, setCards] = useState([]);
+  const [projectCount, setProjectCount] = useState(null);
+  const [highlights, setHighlights] = useState([]);
+  const [testimonials, setTestimonials] = useState([]);
 
   useEffect(() => {
     fetch(`${API_BASE_URL}/home-cards`)
       .then((res) => res.json())
       .then((data) => setCards(data))
       .catch((err) => console.error("Error fetching home cards:", err));
+
+    fetch(`${API_BASE_URL}/site-stats`)
+      .then((res) => res.json())
+      .then((data) => {
+        setProjectCount(data.projects_delivered);
+        setHighlights(data.highlights || []);
+      })
+      .catch((err) => console.error("Error fetching site stats:", err));
+
+    fetch(`${API_BASE_URL}/testimonials`)
+      .then((res) => res.json())
+      .then((data) => setTestimonials(data))
+      .catch((err) => console.error("Error fetching testimonials:", err));
   }, []);
 
   return (
@@ -365,7 +420,7 @@ export default function Home() {
 
             <StatsGrid>
               <StatCard>
-                <div className="number">10+</div>
+                <div className="number">{projectCount === null ? "..." : projectCount >= 10 ? `${projectCount}+` : projectCount}</div>
                 <div className="label">Projects Delivered</div>
               </StatCard>
               <StatCard>
@@ -377,6 +432,16 @@ export default function Home() {
                 <div className="label">Modern Codebase</div>
               </StatCard>
             </StatsGrid>
+            {highlights.length > 0 && (
+              <HighlightsGrid>
+                {highlights.map((highlight) => (
+                  <HighlightCard key={highlight.id}>
+                    <strong>{highlight.value}</strong>
+                    <span>{highlight.label}</span>
+                  </HighlightCard>
+                ))}
+              </HighlightsGrid>
+            )}
           </HeroSection>
         </FadeInUp>
 
@@ -405,6 +470,20 @@ export default function Home() {
             )}
           </CardsGrid>
         </ContentSection>
+
+        {testimonials.length > 0 && (
+          <TestimonialsSection>
+            <SectionHeader badge="Social proof" title="What collaborators say" name="A few words from people I have worked with." />
+            <TestimonialsGrid>
+              {testimonials.map((testimonial) => (
+                <TestimonialCard key={testimonial.id}>
+                  <blockquote>“{testimonial.quote}”</blockquote>
+                  <cite><strong>{testimonial.name}</strong>{testimonial.role && `, ${testimonial.role}`}{testimonial.company && ` at ${testimonial.company}`}</cite>
+                </TestimonialCard>
+              ))}
+            </TestimonialsGrid>
+          </TestimonialsSection>
+        )}
 
         <Footer linkText="Explore My Diary →" linkTo="/mydiary" />
       </SiteContainer>

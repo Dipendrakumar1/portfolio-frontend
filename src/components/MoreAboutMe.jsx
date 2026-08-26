@@ -294,6 +294,81 @@ const SkillBadge = styled.div`
   }
 `;
 
+const DetailsButton = styled.button`
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: inherit;
+  gap: 8px;
+  border: 0;
+  color: inherit;
+  background: transparent;
+  font: inherit;
+  cursor: pointer;
+  text-align: left;
+`;
+
+const DetailsModalOverlay = styled.div`
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(2, 6, 23, 0.78);
+  backdrop-filter: blur(8px);
+`;
+
+const DetailsModal = styled.div`
+  width: min(620px, 100%);
+  max-height: min(720px, 90vh);
+  overflow-y: auto;
+  padding: 30px;
+  border: 1px solid ${theme.borderStrong};
+  border-radius: ${theme.radii.lg};
+  background: linear-gradient(150deg, rgba(23, 32, 54, 0.98) 0%, rgba(11, 17, 33, 0.98) 100%);
+  box-shadow: ${theme.shadows.lift};
+
+  h3 {
+    margin-bottom: 8px;
+    color: #fff;
+  }
+
+  .meta {
+    margin-bottom: 20px;
+    color: ${theme.accent};
+    font-size: 13px;
+  }
+
+  .content {
+    color: ${theme.textBody};
+    line-height: 1.75;
+  }
+
+  .content p:last-child {
+    margin-bottom: 0;
+  }
+`;
+
+const ModalCloseButton = styled.button`
+  float: right;
+  width: 34px;
+  height: 34px;
+  border: 1px solid ${theme.border};
+  border-radius: 50%;
+  color: ${theme.textBody};
+  background: rgba(255, 255, 255, 0.05);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+
+  &:hover {
+    color: #fff;
+    border-color: ${theme.accent};
+  }
+`;
+
 const ExperienceTimeline = styled.div`
   display: flex;
   flex-direction: column;
@@ -452,6 +527,144 @@ const ToolBadge = styled.div`
   }
 `;
 
+const ActivityGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  margin-bottom: 28px;
+
+  @media (max-width: ${theme.breakpoints.tablet}) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const ActivityPanel = styled.div`
+  padding: 20px;
+  border: 1px solid ${theme.border};
+  border-radius: ${theme.radii.md};
+  background: rgba(255, 255, 255, 0.025);
+
+  h3 {
+    margin-bottom: 4px;
+    color: #fff;
+    font-size: 18px;
+  }
+
+  .handle {
+    margin-bottom: 18px;
+    color: ${theme.textMuted};
+    font-size: 13px;
+  }
+
+  .empty {
+    min-height: 116px;
+    display: grid;
+    place-items: center;
+    color: ${theme.textMuted};
+    font-size: 13px;
+    text-align: center;
+  }
+`;
+
+const Heatmap = styled.div`
+  display: grid;
+  grid-template-columns: repeat(53, minmax(5px, 1fr));
+  grid-template-rows: repeat(7, 11px);
+  grid-auto-flow: column;
+  gap: 3px;
+  overflow: hidden;
+  padding: 12px 4px 16px;
+  border-bottom: 1px solid ${theme.border};
+`;
+
+const HeatCell = styled.div`
+  width: 100%;
+  min-width: 5px;
+  border-radius: 2px;
+  background: ${({ $color, $level }) => {
+    if ($level === 0) return 'rgba(148, 163, 184, 0.1)';
+    const opacity = [0, 0.28, 0.48, 0.7, 0.95][$level];
+    return $color === '#38bdf8' ? `rgba(46, 160, 67, ${opacity})` : `rgba(245, 158, 11, ${opacity})`;
+  }};
+  transition: transform 0.15s ease;
+
+  &:hover {
+    transform: scale(1.3);
+    outline: 1px solid ${theme.textBody};
+  }
+`;
+
+const ActivityStats = styled.div`
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 14px;
+  color: ${theme.textMuted};
+  font-size: 12px;
+
+  strong {
+    display: block;
+    color: #fff;
+    font-size: 18px;
+  }
+`;
+
+const ActivityLegend = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  margin-top: 10px;
+  color: ${theme.textMuted};
+  font-size: 11px;
+
+  i {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    background: ${({ $color }) => $color === '#38bdf8' ? 'rgba(46, 160, 67, 0.7)' : 'rgba(245, 158, 11, 0.7)'};
+  }
+`;
+
+function ActivityGraph({ title, username, values, color, stats = [] }) {
+  const valueMap = new Map(values.map((value) => [value.date, value.count]));
+  const latestDate = values[values.length - 1]?.date;
+  const end = latestDate ? new Date(`${latestDate}T00:00:00Z`) : new Date();
+  const start = new Date(end);
+  start.setUTCDate(end.getUTCDate() - 364 - end.getUTCDay());
+  const cells = Array.from({ length: 371 }, (_, index) => {
+    const date = new Date(start);
+    date.setUTCDate(start.getUTCDate() + index);
+    const dateLabel = date.toISOString().slice(0, 10);
+    return { date: dateLabel, count: valueMap.get(dateLabel) || 0 };
+  });
+  const max = Math.max(...cells.map((value) => value.count), 1);
+
+  return (
+    <ActivityPanel>
+      <h3>{title}</h3>
+      <div className="handle">{username ? `@${username}` : "Profile not configured"}</div>
+      {values.length > 0 ? (
+        <>
+          <Heatmap aria-label={`${title} activity graph`}>
+            {cells.map((value) => (
+              <HeatCell key={value.date} title={`${value.date}: ${value.count}`} $level={value.count === 0 ? 0 : Math.min(4, Math.ceil((value.count / max) * 4))} $color={color} />
+            ))}
+          </Heatmap>
+          <ActivityLegend $color={color}><span>Less</span><i /><i /><i /><i /><span>More</span></ActivityLegend>
+          <ActivityStats>
+            {stats.map((stat) => (
+              <span key={stat.label}><strong>{stat.value}</strong>{stat.label}</span>
+            ))}
+          </ActivityStats>
+        </>
+      ) : (
+        <div className="empty">Add a username in the backend environment to load live statistics.</div>
+      )}
+    </ActivityPanel>
+  );
+}
+
 export default function AboutMore() {
   const [about, setAbout] = useState(null);
   const [certs, setCerts] = useState([]);
@@ -461,6 +674,8 @@ export default function AboutMore() {
   const [tools, setTools] = useState([]);
   const [languages, setLanguages] = useState([]);
   const [achievements, setAchievements] = useState([]);
+  const [selectedDetails, setSelectedDetails] = useState(null);
+  const [activityStats, setActivityStats] = useState(null);
 
   useEffect(() => {
     fetch(`${API_BASE_URL}/about`)
@@ -502,11 +717,20 @@ export default function AboutMore() {
       .then((res) => res.json())
       .then((data) => setAchievements(data))
       .catch((err) => console.error("Error fetching achievements:", err));
+
+    fetch(`${API_BASE_URL}/activity-stats`)
+      .then((res) => res.json())
+      .then((data) => setActivityStats(data))
+      .catch((err) => console.error("Error fetching activity stats:", err));
   }, []);
 
   const heroImageSrc = about?.hero_image 
     ? getImageUrl(about.hero_image) 
     : "https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=1472&auto=format&fit=crop";
+
+  const openDetails = (title, details, meta = "") => {
+    setSelectedDetails({ title, details: details || "Details have not been added yet.", meta });
+  };
 
   return (
     <>
@@ -535,6 +759,7 @@ export default function AboutMore() {
             <TOCList>
               <li><TOCLink href="#about">Bio & Overview</TOCLink></li>
               {skills.length > 0 && <li><TOCLink href="#skills">Core Skills</TOCLink></li>}
+              {interests.length > 0 && <li><TOCLink href="#interests">Interests</TOCLink></li>}
               {experiences.length > 0 && <li><TOCLink href="#experience">Work Experience</TOCLink></li>}
               {achievements.length > 0 && <li><TOCLink href="#achievements">Achievements</TOCLink></li>}
               {tools.length > 0 && <li><TOCLink href="#tools">Tools & Tech</TOCLink></li>}
@@ -581,9 +806,28 @@ export default function AboutMore() {
                   <BadgeContainer>
                     {skills.map(skill => (
                       <SkillBadge key={skill.id}>
+                        <DetailsButton onClick={() => openDetails(skill.name, skill.details, [skill.category, skill.level].filter(Boolean).join(" · "))}>
                         {skill.category && <span className="cat">{skill.category}</span>}
                         <strong>{skill.name}</strong>
                         {skill.level && <span className="lvl">({skill.level})</span>}
+                        </DetailsButton>
+                      </SkillBadge>
+                    ))}
+                  </BadgeContainer>
+                </BlockCard>
+              </section>
+            )}
+
+            {interests.length > 0 && (
+              <section id="interests">
+                <SectionTitle>Interests</SectionTitle>
+                <BlockCard>
+                  <BadgeContainer>
+                    {interests.map(interest => (
+                      <SkillBadge key={interest.id}>
+                        <DetailsButton onClick={() => openDetails(interest.name, interest.details)}>
+                          <strong>{interest.name}</strong>
+                        </DetailsButton>
                       </SkillBadge>
                     ))}
                   </BadgeContainer>
@@ -614,6 +858,9 @@ export default function AboutMore() {
                             />
                           )}
                         </ExpHeader>
+                        <DetailsButton onClick={() => openDetails(exp.company_name, exp.details, `${exp.role} · ${exp.tenure}`)}>
+                          View experience details
+                        </DetailsButton>
                         <BulletList>
                           {exp.contributions.map((item, idx) => (
                             <li key={idx}>{item}</li>
@@ -626,18 +873,52 @@ export default function AboutMore() {
               </section>
             )}
 
-            {achievements.length > 0 && (
+            {(achievements.length > 0 || activityStats) && (
               <section id="achievements">
                 <SectionTitle>Achievements & Recognitions</SectionTitle>
                 <BlockCard>
-                  <BulletList>
-                    {achievements.map(ach => (
-                      <li key={ach.id}>
-                        <strong style={{ color: '#fff' }}>{ach.title}</strong>
-                        {ach.description && <p style={{ fontSize: "14px", margin: "4px 0 0 0", color: theme.textMuted }}>{ach.description}</p>}
-                      </li>
-                    ))}
-                  </BulletList>
+                  <ActivityGrid>
+                    <ActivityGraph
+                      title="LeetCode progress"
+                      username={activityStats?.leetcode?.username}
+                      values={(activityStats?.leetcode?.days || []).map((item) => ({
+                        date: item.date,
+                        count: item.count,
+                      }))}
+                      color="#f59e0b"
+                      stats={[
+                        {
+                          label: "problems solved",
+                          value: (activityStats?.leetcode?.solved || []).reduce((total, item) => total + item.count, 0),
+                        },
+                      ]}
+                    />
+                    <ActivityGraph
+                      title="GitHub activity"
+                      username={activityStats?.github?.username}
+                      values={(activityStats?.github?.days || []).map((item) => ({
+                        date: item.date,
+                        count: item.count,
+                      }))}
+                      color="#38bdf8"
+                      stats={[
+                        { label: "public repositories", value: activityStats?.github?.stats?.public_repos || 0 },
+                        { label: "followers", value: activityStats?.github?.stats?.followers || 0 },
+                      ]}
+                    />
+                  </ActivityGrid>
+                  {achievements.length > 0 && (
+                    <BulletList>
+                      {achievements.map(ach => (
+                        <li key={ach.id}>
+                          <DetailsButton onClick={() => openDetails(ach.title, ach.details || ach.description, ach.date || "")}>
+                            <strong style={{ color: '#fff' }}>{ach.title}</strong>
+                          </DetailsButton>
+                          {ach.description && <p style={{ fontSize: "14px", margin: "4px 0 0 0", color: theme.textMuted }}>{ach.description}</p>}
+                        </li>
+                      ))}
+                    </BulletList>
+                  )}
                 </BlockCard>
               </section>
             )}
@@ -649,8 +930,10 @@ export default function AboutMore() {
                   <ToolGrid>
                     {tools.map(tool => (
                       <ToolBadge key={tool.id}>
-                        {tool.icon_url && <img src={getImageUrl(tool.icon_url)} alt="" />}
-                        <span>{tool.name}</span>
+                        <DetailsButton onClick={() => openDetails(tool.name, tool.details)}>
+                          {tool.icon_url && <img src={getImageUrl(tool.icon_url)} alt="" />}
+                          <span>{tool.name}</span>
+                        </DetailsButton>
                       </ToolBadge>
                     ))}
                   </ToolGrid>
@@ -665,8 +948,10 @@ export default function AboutMore() {
                   <BadgeContainer>
                     {languages.map(lang => (
                       <SkillBadge key={lang.id}>
-                        <strong>{lang.name}</strong>
-                        {lang.level && <span className="lvl">({lang.level})</span>}
+                        <DetailsButton onClick={() => openDetails(lang.name, lang.details, lang.level)}>
+                          <strong>{lang.name}</strong>
+                          {lang.level && <span className="lvl">({lang.level})</span>}
+                        </DetailsButton>
                       </SkillBadge>
                     ))}
                   </BadgeContainer>
@@ -681,7 +966,9 @@ export default function AboutMore() {
                   <CertGrid>
                     {certs.map((cert) => (
                       <CertCard key={cert.id}>
-                        <div className="cert-name">{cert.name}</div>
+                        <DetailsButton onClick={() => openDetails(cert.name, cert.details)}>
+                          <div className="cert-name">{cert.name}</div>
+                        </DetailsButton>
                         {cert.image_url ? (
                           <img src={getImageUrl(cert.image_url)} alt={cert.name} />
                         ) : cert.link_url ? (
@@ -699,6 +986,20 @@ export default function AboutMore() {
           </MainContent>
         </ContentGrid>
       </SiteContainer>
+      {selectedDetails && (
+        <DetailsModalOverlay onClick={() => setSelectedDetails(null)}>
+          <DetailsModal role="dialog" aria-modal="true" aria-labelledby="about-details-title" onClick={(event) => event.stopPropagation()}>
+            <ModalCloseButton type="button" aria-label="Close details" onClick={() => setSelectedDetails(null)}>
+              ×
+            </ModalCloseButton>
+            <h3 id="about-details-title">{selectedDetails.title}</h3>
+            {selectedDetails.meta && <div className="meta">{selectedDetails.meta}</div>}
+            <div className="content">
+              <ReactMarkdown rehypePlugins={[rehypeRaw]}>{selectedDetails.details}</ReactMarkdown>
+            </div>
+          </DetailsModal>
+        </DetailsModalOverlay>
+      )}
       <Footer linkText="Explore My Blogs →" linkTo="/blog" />
     </>
   );

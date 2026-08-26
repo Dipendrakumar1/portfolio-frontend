@@ -91,7 +91,7 @@ const useAnalytics = () => {
                         screen_resolution: screenResolution
                     }),
                 });
-            } catch (error) {
+            } catch {
                 // Silently fail on analytics network drop
             }
         };

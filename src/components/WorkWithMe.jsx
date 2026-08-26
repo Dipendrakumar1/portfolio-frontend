@@ -462,26 +462,40 @@ export default function WorkWithMe() {
   const [status, setStatus] = useState(null); // { type: 'success' | 'error', message: '' }
   const recaptchaContainerRef = useRef(null);
   const recaptchaWidgetRef = useRef(null);
+  const recaptchaRenderingRef = useRef(false);
 
   useEffect(() => {
     if (!RECAPTCHA_ENABLED || !recaptchaContainerRef.current) return;
 
     const renderCaptcha = () => {
-      if (!window.grecaptcha || !recaptchaContainerRef.current) return;
+      if (!window.grecaptcha || !recaptchaContainerRef.current || recaptchaWidgetRef.current !== null || recaptchaRenderingRef.current) return;
 
-      if (recaptchaWidgetRef.current !== null && recaptchaWidgetRef.current !== undefined) {
-        try {
-          window.grecaptcha.reset(recaptchaWidgetRef.current);
-        } catch (error) {
-          console.warn("Unable to reset recaptcha widget:", error);
+      const render = () => {
+        if (!window.grecaptcha || typeof window.grecaptcha.render !== "function" || !recaptchaContainerRef.current || recaptchaWidgetRef.current !== null) {
+          recaptchaRenderingRef.current = false;
+          return;
         }
-      }
 
-      recaptchaWidgetRef.current = window.grecaptcha.render(recaptchaContainerRef.current, {
-        sitekey: RECAPTCHA_SITE_KEY,
-        callback: (token) => setCaptchaToken(token),
-        'expired-callback': () => setCaptchaToken(""),
-      });
+        recaptchaRenderingRef.current = true;
+        try {
+          recaptchaWidgetRef.current = window.grecaptcha.render(recaptchaContainerRef.current, {
+            sitekey: RECAPTCHA_SITE_KEY,
+            callback: (token) => setCaptchaToken(token),
+            'expired-callback': () => setCaptchaToken(""),
+          });
+        } catch (error) {
+          recaptchaRenderingRef.current = false;
+          if (!String(error?.message || error).includes("already been rendered")) {
+            console.warn("Unable to render recaptcha widget:", error);
+          }
+        }
+      };
+
+      if (typeof window.grecaptcha.ready === "function") {
+        window.grecaptcha.ready(render);
+      } else {
+        render();
+      }
     };
 
     if (window.grecaptcha) {
@@ -492,6 +506,7 @@ export default function WorkWithMe() {
     const existingScript = document.getElementById("google-recaptcha-script");
     if (existingScript) {
       existingScript.addEventListener("load", renderCaptcha, { once: true });
+      renderCaptcha();
       return;
     }
 
@@ -502,6 +517,10 @@ export default function WorkWithMe() {
     script.defer = true;
     script.onload = renderCaptcha;
     document.body.appendChild(script);
+
+    return () => {
+      script.onload = null;
+    };
   }, []);
 
   useEffect(() => {

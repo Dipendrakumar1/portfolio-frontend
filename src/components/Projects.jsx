@@ -288,6 +288,66 @@ const ProjectImage = styled.div`
   }
 `
 
+const LivePreview = styled.div`
+  margin: 20px 0 28px;
+  overflow: hidden;
+  border: 1px solid ${theme.borderStrong};
+  border-radius: 14px;
+  background: #080d1a;
+  box-shadow: 0 14px 38px rgba(0, 0, 0, 0.45);
+
+  .browser-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 42px;
+    padding: 0 14px;
+    border-bottom: 1px solid ${theme.border};
+    background: rgba(23, 32, 54, 0.95);
+  }
+
+  .dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #f87171;
+    box-shadow: 16px 0 #fbbf24, 32px 0 #34d399;
+    margin-right: 32px;
+  }
+
+  .address {
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    color: ${theme.textMuted};
+    font-family: ${theme.fontMono};
+    font-size: 11px;
+  }
+
+  iframe {
+    display: block;
+    width: 100%;
+    height: 480px;
+    border: 0;
+    background: #fff;
+  }
+
+  .preview-note {
+    padding: 9px 14px;
+    border-top: 1px solid ${theme.border};
+    color: ${theme.textMuted};
+    font-size: 12px;
+  }
+
+  @media (max-width: 480px) {
+    border-radius: 10px;
+    margin: 16px 0 20px;
+
+    iframe { height: 300px; }
+  }
+`;
+
 const ShortDesc = styled.p`
   font-size: clamp(15px, 3.8vw, 17px);
   color: ${theme.text};
@@ -364,6 +424,38 @@ const ProjectContent = styled.div`
     color: inherit;
   }
 `
+
+const CaseStudyGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-top: 28px;
+`;
+
+const CaseStudyBlock = styled.div`
+  padding: 18px;
+  border: 1px solid ${theme.border};
+  border-radius: ${theme.radii.md};
+  background: rgba(255, 255, 255, 0.025);
+
+  h3 { margin-bottom: 8px; color: ${theme.accent}; font-size: 15px; }
+  p { margin: 0; color: ${theme.textBody}; font-size: 14px; line-height: 1.7; }
+`;
+
+const ScreenshotGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  margin-top: 20px;
+
+  img {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+    border: 1px solid ${theme.border};
+    border-radius: ${theme.radii.sm};
+  }
+`;
 
 const LinkGrid = styled.div`
   display: flex;
@@ -615,11 +707,26 @@ export default function Projects() {
                     <BackToTop href="#top">↑ Top</BackToTop>
                   </ProjectHeader>
 
-                  {p.hero_image && (
+                  {p.live_url ? (
+                    <LivePreview>
+                      <div className="browser-bar">
+                        <span className="dot" aria-hidden="true" />
+                        <span className="address">{p.live_url}</span>
+                      </div>
+                      <iframe
+                        src={p.live_url}
+                        title={`Live preview of ${p.title}`}
+                        loading="lazy"
+                        allow="fullscreen"
+                        referrerPolicy="strict-origin-when-cross-origin"
+                      />
+                      <div className="preview-note">Live application preview</div>
+                    </LivePreview>
+                  ) : p.hero_image ? (
                     <ProjectImage>
                       <img src={getImageUrl(p.hero_image)} alt={p.title} />
                     </ProjectImage>
-                  )}
+                  ) : null}
 
                   <ShortDesc>{p.short_description}</ShortDesc>
 
@@ -627,6 +734,23 @@ export default function Projects() {
                     <ProjectContent>
                       <ReactMarkdown rehypePlugins={[rehypeRaw]}>{p.long_description}</ReactMarkdown>
                     </ProjectContent>
+                  )}
+
+                  {(p.problem || p.solution || p.role || p.technologies || p.outcomes) && (
+                    <CaseStudyGrid>
+                      {p.problem && <CaseStudyBlock><h3>Challenge</h3><ReactMarkdown>{p.problem}</ReactMarkdown></CaseStudyBlock>}
+                      {p.solution && <CaseStudyBlock><h3>Solution</h3><ReactMarkdown>{p.solution}</ReactMarkdown></CaseStudyBlock>}
+                      {p.role && <CaseStudyBlock><h3>My role</h3><p>{p.role}</p></CaseStudyBlock>}
+                      {p.technologies && <CaseStudyBlock><h3>Technology</h3><ReactMarkdown>{p.technologies}</ReactMarkdown></CaseStudyBlock>}
+                      {p.outcomes && <CaseStudyBlock><h3>Outcome</h3><ReactMarkdown>{p.outcomes}</ReactMarkdown></CaseStudyBlock>}
+                    </CaseStudyGrid>
+                  )}
+                  {p.screenshots?.length > 0 && (
+                    <ScreenshotGrid>
+                      {p.screenshots.map((screenshot) => (
+                        <img key={screenshot} src={getImageUrl(screenshot)} alt={`${p.title} project screenshot`} loading="lazy" />
+                      ))}
+                    </ScreenshotGrid>
                   )}
 
                   <LinkGrid>

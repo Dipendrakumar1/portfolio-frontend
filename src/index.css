@@ -2,11 +2,25 @@
 @tailwind components;
 @tailwind utilities;
 
-/* global tweaks to match compact, clean personal site */
-:root{
-  --container-max: 980px;
+:root {
+  --container-max: 1700px;
+  color-scheme: dark;
 }
-html,body,#root { height:100%; }
-body { font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; color: #0f172a; }
-.container { max-width: var(--container-max); margin-left:auto; margin-right:auto; padding-left:1rem; padding-right:1rem; }
-a { color: inherit; }
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+::selection {
+  background: rgba(56, 189, 248, 0.32);
+  color: #fff;
+}
